@@ -1616,20 +1616,58 @@
         }
 
         const subtotalFromUrl = getUrlParameter('subtotal');
-        const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
-        const cartItemsJSON = localStorage.getItem('cart_items') || localStorage.getItem('cart_products');
         
+        // Lógica robusta para encontrar produtos no localStorage
+        function getProdutosFromStorage() {
+            var possibleKeys = ['produtos', 'products', 'cartProducts', 'cartItems', 'cart_items', 'cart_products', 'cart', 'pedido', 'items', 'product_info'];
+            var produtos = null;
+
+            for (var k = 0; k < possibleKeys.length; k++) {
+                var raw = localStorage.getItem(possibleKeys[k]);
+                if (raw) {
+                    try {
+                        var parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            produtos = parsed;
+                            break;
+                        } else if (typeof parsed === 'object' && parsed !== null && (parsed.nome || parsed.name || parsed.title)) {
+                            produtos = [parsed]; // Converte objeto único em array
+                            break;
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (!produtos) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    try {
+                        var rawItem = localStorage.getItem(key);
+                        var parsedItem = JSON.parse(rawItem);
+                        if (Array.isArray(parsedItem) && parsedItem.length > 0) {
+                            var first = parsedItem[0];
+                            if (first && (first.nome || first.name || first.title || first.p || first.n)) {
+                                produtos = parsedItem;
+                                break;
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }
+            return produtos;
+        }
+
+        const produtosData = getProdutosFromStorage();
         let subtotalValue = 0;
-        if (cartItemsJSON) {
-            const products = JSON.parse(cartItemsJSON);
-            subtotalValue = products.reduce((acc, product) => {
-                const price = parseFloat(product.v || product.price || product.value || 0);
-                const qty = parseInt(product.q || product.quantity || 1);
+
+        if (produtosData) {
+            subtotalValue = produtosData.reduce((acc, p) => {
+                const price = parseFloat(p.preco || p.price || p.valor || p.v || p.value || 0);
+                const qty = parseInt(p.quantidade || p.quantity || p.q || 1);
                 return acc + (price * qty);
             }, 0);
         } else {
-            const price = parseFloat(productInfo.value || productInfo.price || (subtotalFromUrl ? subtotalFromUrl : 89.47));
-            subtotalValue = price;
+            subtotalValue = subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47;
         }
 
         if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'public_xxx') {
@@ -1720,59 +1758,81 @@
         // No arquivo de checkout, localize a função renderOrderSummary() e substitua por esta:
 
 function renderOrderSummary() {
-    // Tenta pegar a lista completa de produtos do localStorage
-    // Chaves baseadas no primeiro código: 'cart_items' ou 'cart_products'
-    const cartItemsJSON = localStorage.getItem('cart_items') || localStorage.getItem('cart_products');
-    const deliveryTime = localStorage.getItem('delivery_time') || '3 a 7 dias úteis';
+    // Lógica robusta para encontrar produtos no localStorage
+    function getProdutosFromStorage() {
+        var possibleKeys = ['produtos', 'products', 'cartProducts', 'cartItems', 'cart_items', 'cart_products', 'cart', 'pedido', 'items', 'product_info'];
+        var produtos = null;
 
+        for (var k = 0; k < possibleKeys.length; k++) {
+            var raw = localStorage.getItem(possibleKeys[k]);
+            if (raw) {
+                try {
+                    var parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        produtos = parsed;
+                        break;
+                    } else if (typeof parsed === 'object' && parsed !== null && (parsed.nome || parsed.name || parsed.title || parsed.n)) {
+                        produtos = [parsed];
+                        break;
+                    }
+                } catch (e) {}
+            }
+        }
+
+        if (!produtos) {
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                try {
+                    var rawItem = localStorage.getItem(key);
+                    var parsedItem = JSON.parse(rawItem);
+                    if (Array.isArray(parsedItem) && parsedItem.length > 0) {
+                        var first = parsedItem[0];
+                        if (first && (first.nome || first.name || first.title || first.p || first.n)) {
+                            produtos = parsedItem;
+                            break;
+                        }
+                    }
+                } catch (e) {}
+            }
+        }
+        return produtos;
+    }
+
+    const produtos = getProdutosFromStorage();
+    const deliveryTime = localStorage.getItem('delivery_time') || '3 a 7 dias úteis';
     let productsHTML = '';
     
-    if (cartItemsJSON) {
-        const products = JSON.parse(cartItemsJSON);
-        
-        // Gera o HTML para cada produto na lista
-        products.forEach(product => {
-            // Mapeamento de campos: p=photo/image, n=name, v=value/price, q=quantity
-            const img = product.p || product.image || product.photo || 'https://via.placeholder.com/150';
-            const name = product.n || product.name || 'Produto';
-            const price = parseFloat(product.v || product.price || product.value || 0);
-            const qty = parseInt(product.q || product.quantity || 1);
+    if (produtos && produtos.length > 0) {
+        produtos.forEach(p => {
+            const nome = p.nome || p.name || p.title || p.n || 'Produto';
+            const qtd = parseInt(p.quantidade || p.quantity || p.q || 1);
+            const preco = parseFloat(p.preco || p.price || p.valor || p.v || p.value || 0);
+            const foto = p.foto || p.image || p.img || p.imagem || p.p || 'https://via.placeholder.com/150';
+            const subtotal = preco * qtd;
 
             productsHTML += `
                 <div class="order-card" style="margin-bottom: 12px;">
                     <div class="order-image-container">
-                        <img src="${img}" alt="${name}">
+                        <img src="${foto}" alt="${nome}">
                     </div>
                     <div class="order-details">
-                        <div class="order-product-name">${name}</div>
+                        <div class="order-product-name">${nome}</div>
                         <div class="order-product-price-row">
-                            <div class="order-product-price">R$ ${price.toFixed(2).replace('.', ',')}</div>
-                            <div class="order-product-qty">Qtd: ${qty}</div>
+                            <div class="order-product-price">R$ ${preco.toFixed(2).replace('.', ',')}</div>
+                            <div class="order-product-qty">Qtd: ${qtd}</div>
                         </div>
                         <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-light); margin-top: 2px;">
-                            Valor Total: R$ ${(qty * price).toFixed(2).replace('.', ',')}
+                            Valor Total: R$ ${subtotal.toFixed(2).replace('.', ',')}
                         </div>
                     </div>
                 </div>
             `;
         });
     } else {
-        // Fallback para 'product_info'
-        const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
-        const img = productInfo.photo || productInfo.image || 'https://via.placeholder.com/150';
-        const name = productInfo.name || 'Produto Selecionado';
-        const price = parseFloat(productInfo.value || productInfo.price || subtotalValue);
-
         productsHTML = `
             <div class="order-card">
-                <div class="order-image-container">
-                    <img src="${img}" alt="${name}">
-                </div>
                 <div class="order-details">
-                    <div class="order-product-name">${name}</div>
-                    <div class="order-product-price-row">
-                        <div class="order-product-price">R$ ${price.toFixed(2).replace('.', ',')}</div>
-                    </div>
+                    <div class="order-product-name">Nenhum produto encontrado</div>
                 </div>
             </div>
         `;
