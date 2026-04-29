@@ -229,7 +229,7 @@
         margin-bottom: 16px;
     }
 
-   /* Container da Seção */
+    /* Container da Seção */
 .form-section {
     margin-bottom: 24px;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -662,31 +662,27 @@
                     <div class="shipping-options hidden" id="dividerAfterShipping" style="border-top: 1px solid #e5e7eb; margin: 32px 0; padding: 0; height: 0;"></div>
                     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 32px 0; display: none;" id="hrDivider">
 
-					<div class="form-section" id="sectionAddressInfo">
-    <h3 class="section-title">Endereço de Entrega</h3>
-    
-    <div class="address-info-block">
-        <div class="address-info-row">
-            <span class="address-info-label">Logradouro</span>
-            <span class="address-info-value" id="addressDisplay">Aguardando CEP...</span>
-        </div>
-        
-        <div class="address-info-row">
-            <span class="address-info-label">Bairro</span>
-            <span class="address-info-value" id="neighborhoodDisplay">-</span>
-        </div>
-        
-        <div class="address-info-row">
-            <span class="address-info-label">Cidade</span>
-            <span class="address-info-value" id="cityDisplay">-</span>
-        </div>
-        
-        <div class="address-info-row">
-            <span class="address-info-label">Estado</span>
-            <span class="address-info-value" id="stateDisplay">-</span>
-        </div>
-    </div>
-</div>
+					<!-- Seção 2.5: Bloco de Endereço Automático (não editável) -->
+                    <div class="form-section hidden" id="sectionAddressInfo">
+                        <h3 class="section-title">Endereço de Entrega</h3>
+                        <div class="address-info-block">
+                            <div class="address-info-row">
+                                <span class="address-info-label">Logradouro:</span>
+                                <span class="address-info-value" id="addressDisplay">-</span>
+                            </div>
+                            <div class="address-info-row">
+                                <span class="address-info-label">Bairro:</span>
+                                <span class="address-info-value" id="neighborhoodDisplay">-</span>
+                            </div>
+                            <div class="address-info-row">
+                                <span class="address-info-label">Cidade:</span>
+                                <span class="address-info-value" id="cityDisplay">-</span>
+                            </div>
+                            <div class="address-info-row">
+                                <span class="address-info-label">Estado:</span>
+                                <span class="address-info-value" id="stateDisplay">-</span>
+                            </div>
+                        </div>
                         <!-- Campos ocultos para armazenar os valores -->
                         <input type="hidden" id="address" name="address">
                         <input type="hidden" id="neighborhood" name="neighborhood">
