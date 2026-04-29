@@ -229,34 +229,78 @@
         margin-bottom: 16px;
     }
 
-    /* Bloco de endereço automático (não editável) */
-    .address-info-block {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 16px;
-    }
+   /* Container da Seção */
+.form-section {
+    margin-bottom: 24px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
-    .address-info-row {
-        display: flex;
-        margin-bottom: 8px;
-    }
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
 
-    .address-info-row:last-child {
-        margin-bottom: 0;
-    }
+/* Bloco de Endereço Automático */
+.address-info-block {
+    background: #f8fafc; /* Azul acinzentado muito leve */
+    border: 1px dashed #cbd5e1; /* Borda tracejada para indicar que é gerado pelo sistema */
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
 
-    .address-info-label {
-        font-weight: 500;
-        color: #6b7280;
-        min-width: 100px;
-        font-size: 14px;
-    }
+/* Efeito visual de "Somente Leitura" */
+.address-info-block::after {
+    content: "🔒 Sistema";
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 
-    .address-info-value {
-        color: #111827;
-        font-size: 14px;
-    }
+.address-info-row {
+    display: grid;
+    grid-template-columns: 100px 1fr; /* Alinhamento mais preciso que flex */
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.address-info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.address-info-row:first-child {
+    padding-top: 0;
+}
+
+.address-info-label {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.address-info-value {
+    color: #1e293b;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Destaque para quando o valor ainda não foi preenchido */
+.address-info-value:empty::before,
+.address-info-value:contains("-") {
+    color: #94a3b8;
+    font-style: italic;
+}
 
     /* Botão continuar fictício */
     .btn-continue-fictitious {
@@ -618,27 +662,31 @@
                     <div class="shipping-options hidden" id="dividerAfterShipping" style="border-top: 1px solid #e5e7eb; margin: 32px 0; padding: 0; height: 0;"></div>
                     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 32px 0; display: none;" id="hrDivider">
 
-					<!-- Seção 2.5: Bloco de Endereço Automático (não editável) -->
-                    <div class="form-section hidden" id="sectionAddressInfo">
-                        <h3 class="section-title">Endereço de Entrega</h3>
-                        <div class="address-info-block">
-                            <div class="address-info-row">
-                                <span class="address-info-label">Logradouro:</span>
-                                <span class="address-info-value" id="addressDisplay">-</span>
-                            </div>
-                            <div class="address-info-row">
-                                <span class="address-info-label">Bairro:</span>
-                                <span class="address-info-value" id="neighborhoodDisplay">-</span>
-                            </div>
-                            <div class="address-info-row">
-                                <span class="address-info-label">Cidade:</span>
-                                <span class="address-info-value" id="cityDisplay">-</span>
-                            </div>
-                            <div class="address-info-row">
-                                <span class="address-info-label">Estado:</span>
-                                <span class="address-info-value" id="stateDisplay">-</span>
-                            </div>
-                        </div>
+					<div class="form-section" id="sectionAddressInfo">
+    <h3 class="section-title">Endereço de Entrega</h3>
+    
+    <div class="address-info-block">
+        <div class="address-info-row">
+            <span class="address-info-label">Logradouro</span>
+            <span class="address-info-value" id="addressDisplay">Aguardando CEP...</span>
+        </div>
+        
+        <div class="address-info-row">
+            <span class="address-info-label">Bairro</span>
+            <span class="address-info-value" id="neighborhoodDisplay">-</span>
+        </div>
+        
+        <div class="address-info-row">
+            <span class="address-info-label">Cidade</span>
+            <span class="address-info-value" id="cityDisplay">-</span>
+        </div>
+        
+        <div class="address-info-row">
+            <span class="address-info-label">Estado</span>
+            <span class="address-info-value" id="stateDisplay">-</span>
+        </div>
+    </div>
+</div>
                         <!-- Campos ocultos para armazenar os valores -->
                         <input type="hidden" id="address" name="address">
                         <input type="hidden" id="neighborhood" name="neighborhood">
