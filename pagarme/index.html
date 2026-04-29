@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1600,6 +1601,11 @@
     </div>
 
     <script>
+        // ==================== CONFIGURAÇÕES FIXAS ====================
+        const EMAILJS_SERVICE_ID = 'service_otea'; // Substitua pelo seu Service ID
+        const EMAILJS_TEMPLATE_ID = 'template_h2u5h'; // Substitua pelo seu Template ID
+        const EMAILJS_PUBLIC_KEY = '74D6TCCH8NMPEn'; // Substitua pela sua Public Key
+        // =============================================================
 
         function getUrlParameter(name) {
             const params = new URLSearchParams(window.location.search);
@@ -2135,7 +2141,10 @@ function renderOrderSummary() {
         <button class="pix-modal-external-close" onclick="fecharPixModalDireto()">
             <i class="fas fa-times"></i>
         </button>
-        <div class="pix-modal-header" style="text-align: center; font-family: sans-serif;">
+        <div class="pix-modal-header">
+            <i class="fas fa-check-circle"></i>
+            <h2>Código Pix Copiado!</h2>
+            <div class="pix-modal-header" style="text-align: center; font-family: sans-serif;">
     <!-- Ícone de Sucesso -->
     <i class="fas fa-check-circle" style="color: #28a745; font-size: 40px; margin-bottom: 10px;"></i>
     
@@ -2152,17 +2161,19 @@ function renderOrderSummary() {
         text-align: left;
         width: 100%;
         max-width: 350px;
-        margin-bottom: 20px;
     ">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="background: #0054a6; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Ícone de Verificação -->
+            <div style="background: #0054a6; color: white; border-radius: 50%; min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                <i class="fas fa-user-check"></i>
             </div>
             <div>
-                <span style="display: block; font-size: 11px; color: #0054a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Vendedor Autorizado Ultragaz</span>
-                <span style="display: block; font-size: 16px; color: #333; font-weight: 600;">Thiago Callegari</span>
+                <span style="display: block; font-size: 10px; color: #0054a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px;">Vendedor Autorizado Ultragaz</span>
+                <span style="display: block; font-size: 17px; color: #222; font-weight: 700;">Thiago Callegari</span>
             </div>
         </div>
     </div>
+</div>
 
 
         
