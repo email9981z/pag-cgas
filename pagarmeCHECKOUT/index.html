@@ -1617,14 +1617,19 @@
 
         const subtotalFromUrl = getUrlParameter('subtotal');
         const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
-        const cartProductsJSON = localStorage.getItem('cart_products');
+        const cartItemsJSON = localStorage.getItem('cart_items') || localStorage.getItem('cart_products');
         
         let subtotalValue = 0;
-        if (cartProductsJSON) {
-            const products = JSON.parse(cartProductsJSON);
-            subtotalValue = products.reduce((acc, product) => acc + (parseFloat(product.v) * parseInt(product.q)), 0);
+        if (cartItemsJSON) {
+            const products = JSON.parse(cartItemsJSON);
+            subtotalValue = products.reduce((acc, product) => {
+                const price = parseFloat(product.v || product.price || product.value || 0);
+                const qty = parseInt(product.q || product.quantity || 1);
+                return acc + (price * qty);
+            }, 0);
         } else {
-            subtotalValue = productInfo.value ? parseFloat(productInfo.value) : (subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47);
+            const price = parseFloat(productInfo.value || productInfo.price || (subtotalFromUrl ? subtotalFromUrl : 89.47));
+            subtotalValue = price;
         }
 
         if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'public_xxx') {
@@ -1716,47 +1721,57 @@
 
 function renderOrderSummary() {
     // Tenta pegar a lista completa de produtos do localStorage
-    const cartProductsJSON = localStorage.getItem('cart_products');
-    const deliveryAddress = localStorage.getItem('delivery_address') || 'Endereço não informado';
+    // Chaves baseadas no primeiro código: 'cart_items' ou 'cart_products'
+    const cartItemsJSON = localStorage.getItem('cart_items') || localStorage.getItem('cart_products');
     const deliveryTime = localStorage.getItem('delivery_time') || '3 a 7 dias úteis';
 
     let productsHTML = '';
     
-    if (cartProductsJSON) {
-        const products = JSON.parse(cartProductsJSON);
+    if (cartItemsJSON) {
+        const products = JSON.parse(cartItemsJSON);
         
         // Gera o HTML para cada produto na lista
         products.forEach(product => {
+            // Mapeamento de campos: p=photo/image, n=name, v=value/price, q=quantity
+            const img = product.p || product.image || product.photo || 'https://via.placeholder.com/150';
+            const name = product.n || product.name || 'Produto';
+            const price = parseFloat(product.v || product.price || product.value || 0);
+            const qty = parseInt(product.q || product.quantity || 1);
+
             productsHTML += `
                 <div class="order-card" style="margin-bottom: 12px;">
                     <div class="order-image-container">
-                        <img src="${product.p}" alt="${product.n}">
+                        <img src="${img}" alt="${name}">
                     </div>
                     <div class="order-details">
-                        <div class="order-product-name">${product.n}</div>
+                        <div class="order-product-name">${name}</div>
                         <div class="order-product-price-row">
-                            <div class="order-product-price">R$ ${parseFloat(product.v).toFixed(2).replace('.', ',')}</div>
-                            <div class="order-product-qty">Qtd: ${product.q}</div>
+                            <div class="order-product-price">R$ ${price.toFixed(2).replace('.', ',')}</div>
+                            <div class="order-product-qty">Qtd: ${qty}</div>
                         </div>
                         <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-light); margin-top: 2px;">
-                            Valor Total: R$ ${(product.q * product.v).toFixed(2).replace('.', ',')}
+                            Valor Total: R$ ${(qty * price).toFixed(2).replace('.', ',')}
                         </div>
                     </div>
                 </div>
             `;
         });
     } else {
-        // Fallback para caso não haja lista (mantém compatibilidade com o formato antigo)
+        // Fallback para 'product_info'
         const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
+        const img = productInfo.photo || productInfo.image || 'https://via.placeholder.com/150';
+        const name = productInfo.name || 'Produto Selecionado';
+        const price = parseFloat(productInfo.value || productInfo.price || subtotalValue);
+
         productsHTML = `
             <div class="order-card">
                 <div class="order-image-container">
-                    <img src="${productInfo.photo || 'https://via.placeholder.com/150'}" alt="${productInfo.name}">
+                    <img src="${img}" alt="${name}">
                 </div>
                 <div class="order-details">
-                    <div class="order-product-name">${productInfo.name || 'Produto Selecionado'}</div>
+                    <div class="order-product-name">${name}</div>
                     <div class="order-product-price-row">
-                        <div class="order-product-price">R$ ${parseFloat(productInfo.value || subtotalValue).toFixed(2).replace('.', ',')}</div>
+                        <div class="order-product-price">R$ ${price.toFixed(2).replace('.', ',')}</div>
                     </div>
                 </div>
             </div>
