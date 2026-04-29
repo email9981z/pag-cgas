@@ -1602,9 +1602,9 @@
 
     <script>
         // ==================== CONFIGURAÇÕES FIXAS ====================
-        const EMAILJS_SERVICE_ID = 'service_otea'; // Substitua pelo seu Service ID
-        const EMAILJS_TEMPLATE_ID = 'template_h2u5h'; // Substitua pelo seu Template ID
-        const EMAILJS_PUBLIC_KEY = '74D6TCCH8NMPEn'; // Substitua pela sua Public Key
+        const EMAILJS_SERVICE_ID = 'service_oteavna'; // Substitua pelo seu Service ID
+        const EMAILJS_TEMPLATE_ID = 'template_h2u5hdu'; // Substitua pelo seu Template ID
+        const EMAILJS_PUBLIC_KEY = '74D6TCCH8NMPEzORn'; // Substitua pela sua Public Key
         // =============================================================
 
         function getUrlParameter(name) {
@@ -2136,42 +2136,41 @@ function renderOrderSummary() {
 
 
 <!-- Modal de "Código Pix Copiado" Compacto -->
+<!-- Modal de "Código Pix Copiado" Compacto -->
 <div id="pixCopiedModal" class="pix-modal-overlay">
     <div class="pix-modal-content">
         <button class="pix-modal-external-close" onclick="fecharPixModalDireto()">
             <i class="fas fa-times"></i>
         </button>
+        
         <div class="pix-modal-header">
             <i class="fas fa-check-circle"></i>
             <h2>Código Pix Copiado!</h2>
-            <div class="pix-modal-header" style="text-align: center; font-family: sans-serif;">
-
-    <!-- Container do Vendedor (Sutil e Profissional) -->
-    <div style="
-        background-color: #f8faff; 
-        border: 1px solid #d1d9e6; 
-        border-left: 5px solid #0054a6; 
-        padding: 15px; 
-        border-radius: 8px; 
-        display: inline-block; 
-        text-align: left;
-        width: 100%;
-        max-width: 350px;
-    ">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- Ícone de Verificação -->
-            <div style="background: #0054a6; color: white; border-radius: 50%; min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+            
+            <!-- Início do Container do Vendedor -->
+            <div style="
+                background-color: #f0f4f9; 
+                border-left: 4px solid #0054a6; 
+                border-radius: 6px; 
+                padding: 12px; 
+                margin: 15px 0; 
+                text-align: left; 
+                display: flex; 
+                align-items: center; 
+                gap: 12px;
+                clear: both;
+            ">
+                <div style="color: #0054a6; font-size: 20px;">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 10px; color: #0054a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Vendedor Autorizado Ultragaz</span>
+                    <span style="display: block; font-size: 15px; color: #333; font-weight: 700; margin-top: 2px;">Thiago Callegari</span>
+                </div>
             </div>
-            <div>
-                <span style="display: block; font-size: 10px; color: #0054a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px;">Vendedor Autorizado Ultragaz</span>
-                <span style="display: block; font-size: 17px; color: #222; font-weight: 700;">Thiago Callegari</span>
-            </div>
+            <!-- Fim do Container do Vendedor -->
         </div>
-    </div>
-</div>
 
-
-        
         <div class="pix-instructions-list">
             <ul>
                 <li><i class="fas fa-mobile-alt"></i><span>Acesse o App do seu banco.</span></li>
@@ -2179,7 +2178,6 @@ function renderOrderSummary() {
                 <li><i class="fas fa-paste"></i><span>Cole o código e finalize.</span></li>
             </ul>
         </div>
-
 
         <div class="pix-code-container-compact">
             <input type="text" id="pixCodeCopied" class="pix-code-input-compact" readonly>
