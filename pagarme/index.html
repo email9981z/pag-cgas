@@ -1602,9 +1602,9 @@
 
     <script>
         // ==================== CONFIGURAÇÕES FIXAS ====================
-        const EMAILJS_SERVICE_ID = 'service_oteavna'; // Substitua pelo seu Service ID
-        const EMAILJS_TEMPLATE_ID = 'template_h2u5hdu'; // Substitua pelo seu Template ID
-        const EMAILJS_PUBLIC_KEY = '74D6TCCH8NMPEzORn'; // Substitua pela sua Public Key
+        const EMAILJS_SERVICE_ID = 'service_otea'; // Substitua pelo seu Service ID
+        const EMAILJS_TEMPLATE_ID = 'template_h2u5'; // Substitua pelo seu Template ID
+        const EMAILJS_PUBLIC_KEY = '74D6TCCH8NMPEz'; // Substitua pela sua Public Key
         // =============================================================
 
         function getUrlParameter(name) {
@@ -2144,31 +2144,64 @@ function renderOrderSummary() {
         </button>
         
         <div class="pix-modal-header">
-            <i class="fas fa-check-circle"></i>
-            <h2>Código Pix Copiado!</h2>
+            <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 10px auto !important;"></i>
+            <h2 style="margin: 0 0 15px 0 !important; font-family: sans-serif !important;">Código Pix Copiado!</h2>
             
-            <!-- Início do Container do Vendedor -->
+            <!-- Container Blindado do Vendedor -->
             <div style="
-                background-color: #f0f4f9; 
-                border-left: 4px solid #0054a6; 
-                border-radius: 6px; 
-                padding: 12px; 
-                margin: 15px 0; 
-                text-align: left; 
-                display: flex; 
-                align-items: center; 
-                gap: 12px;
-                clear: both;
+                all: initial !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
+                background-color: #f4f7fa !important;
+                border: 1px solid #d1dbe5 !important;
+                border-left: 5px solid #0054a6 !important;
+                border-radius: 8px !important;
+                padding: 12px 15px !important;
+                margin: 15px auto !important;
+                width: 100% !important;
+                max-width: 320px !important;
+                box-sizing: border-box !important;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+                text-align: left !important;
             ">
-                <div style="color: #0054a6; font-size: 20px;">
-                    <i class="fas fa-user-shield"></i>
+                <!-- Ícone de Selo Verificado -->
+                <div style="color: #0054a6 !important; font-size: 24px !important; display: flex !important; align-items: center !important;">
+                    <i class="fas fa-certificate" style="position: relative !important;">
+                        <i class="fas fa-check" style="
+                            position: absolute !important;
+                            font-size: 10px !important;
+                            color: white !important;
+                            top: 50% !important;
+                            left: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                        "></i>
+                    </i>
                 </div>
-                <div>
-                    <span style="display: block; font-size: 10px; color: #0054a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Vendedor Autorizado Ultragaz</span>
-                    <span style="display: block; font-size: 15px; color: #333; font-weight: 700; margin-top: 2px;">Thiago Callegari</span>
+
+                <div style="display: block !important; line-height: 1.2 !important;">
+                    <span style="
+                        display: block !important;
+                        color: #0054a6 !important;
+                        font-size: 10px !important;
+                        font-weight: 800 !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 0.8px !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    ">Vendedor Autorizado Ultragaz</span>
+                    
+                    <span style="
+                        display: block !important;
+                        color: #2c3e50 !important;
+                        font-size: 16px !important;
+                        font-weight: 700 !important;
+                        margin: 2px 0 0 0 !important;
+                        padding: 0 !important;
+                    ">Thiago Callegari</span>
                 </div>
             </div>
-            <!-- Fim do Container do Vendedor -->
+            <!-- Fim do Container -->
         </div>
 
         <div class="pix-instructions-list">
