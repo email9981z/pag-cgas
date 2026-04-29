@@ -2140,87 +2140,84 @@ function renderOrderSummary() {
         <button class="pix-modal-external-close" onclick="fecharPixModalDireto()">
             <i class="fas fa-times"></i>
         </button>
-
+        
 <div class="pix-modal-header">
     <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 10px auto !important; color: #28a745; font-size: 32px;"></i>
-    <h2 style="margin: 0 0 15px 0 !important; font-family: sans-serif !important; color: #333 !important;">Código Pix Copiado!</h2>
+    <h2 style="margin: 0 0 15px 0 !important; font-family: 'Segoe UI', sans-serif !important; color: #333 !important; font-weight: 700 !important;">Código Pix Copiado!</h2>
     
-    <!-- Container Blindado e Profissional -->
+    <!-- Container Ultra-Leve e Profissional -->
     <div style="
         all: initial !important;
         display: flex !important;
         align-items: center !important;
-        gap: 15px !important;
+        gap: 16px !important;
         background-color: #ffffff !important;
-        border: 1px solid #dce4ee !important;
-        border-left: 6px solid #0054a6 !important;
-        border-radius: 10px !important;
-        padding: 16px !important;
+        border: 1px solid #edf2f7 !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
         margin: 15px 0 !important;
         width: 100% !important;
         box-sizing: border-box !important;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
         text-align: left !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        transition: all 0.3s ease !important;
     ">
-        <!-- Ícone de Verificação em SVG (Imune a CSS externo) -->
-        <div style="flex-shrink: 0 !important; display: flex !important;">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <path d="M12 1L14.5 3.5H18V7L20.5 9.5V14.5L18 17V20.5H14.5L12 23L9.5 20.5H6V17L3.5 14.5V9.5L6 7V3.5H9.5L12 1Z" fill="#0054a6"/>
-                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Ícone Minimalista de Verificação -->
+        <div style="flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <circle cx="12" cy="12" r="11" fill="#0054a6" fill-opacity="0.1"/>
+                <path d="M12 2L13.5 4.5L16.5 5L17 8L19.5 9.5L18.5 12.5L19.5 15.5L17 17L16.5 20L13.5 20.5L12 23L10.5 20.5L7.5 20L7 17L4.5 15.5L5.5 12.5L4.5 9.5L7 8L7.5 5L10.5 4.5L12 2Z" fill="#0054a6"/>
+                <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
 
-        <div style="display: flex !important; flex-direction: column !important; gap: 4px !important;">
-            <!-- Texto Superior -->
+        <div style="display: flex !important; flex-direction: column !important; gap: 2px !important;">
+            <!-- Texto de Status -->
             <span style="
                 display: block !important;
-                color: #666 !important;
+                color: #718096 !important;
                 font-size: 11px !important;
-                font-weight: 600 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.3px !important;
+                font-weight: 500 !important;
                 margin: 0 !important;
             ">Vendedor acionado em sua Região:</span>
             
-            <!-- Nome do Vendedor -->
+            <!-- Nome com Peso Visual Médio -->
             <span style="
                 display: block !important;
-                color: #1a1a1a !important;
-                font-size: 18px !important;
-                font-weight: 800 !important;
+                color: #2d3748 !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
                 margin: 0 !important;
-                line-height: 1.1 !important;
+                letter-spacing: -0.2px !important;
             ">Thiago Callegari</span>
 
-            <!-- Etiqueta Profissional Ultragaz -->
+            <!-- Etiqueta Modernista -->
             <div style="
-                display: inline-flex !important;
+                display: flex !important;
                 align-items: center !important;
-                background-color: #0054a6 !important;
-                color: #ffffff !important;
-                padding: 3px 10px !important;
-                border-radius: 4px !important;
-                width: fit-content !important;
                 margin-top: 4px !important;
             ">
                 <span style="
-                    font-size: 10px !important;
-                    font-weight: 900 !important;
+                    background-color: #0054a6 !important;
+                    color: white !important;
+                    font-size: 9px !important;
+                    font-weight: 700 !important;
                     text-transform: uppercase !important;
-                    letter-spacing: 1px !important;
+                    padding: 2px 8px !important;
+                    border-radius: 100px !important;
+                    letter-spacing: 0.5px !important;
                 ">Ultragaz</span>
-                <div style="
+                <span style="
                     margin-left: 6px !important;
-                    width: 6px !important;
-                    height: 6px !important;
-                    background-color: #ffcc00 !important;
-                    border-radius: 50% !important;
-                "></div>
+                    color: #a0aec0 !important;
+                    font-size: 10px !important;
+                    font-weight: 400 !important;
+                ">• Oficial</span>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
