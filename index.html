@@ -661,6 +661,38 @@
                         </div>
                     </div>
 
+                    <!-- Seção 2.4: Dados para Entrega (após seleção do frete) -->
+                    <div class="form-section hidden" id="sectionPersonalData">
+                        <h3 class="section-title">Dados para Entrega</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="firstName">Seu Nome *</label>
+                                <input type="text" id="firstName" name="firstName" class="form-input" required>
+                                <div class="error-message" id="firstNameError">Digite seu nome</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="lastName">Sobrenome *</label>
+                                <input type="text" id="lastName" name="lastName" class="form-input" required>
+                                <div class="error-message" id="lastNameError">Digite seu sobrenome</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Telefone *</label>
+                            <input type="tel" id="phone" name="phone" class="form-input" maxlength="15" required placeholder="(00) 00000-0000" inputmode="numeric" autocomplete="tel">
+                            <div class="error-message" id="phoneError">Digite um telefone válido</div>
+                        </div>
+                    </div>
+
+                    <!-- Seção 2.7: Dados para Nota Fiscal (CPF) -->
+                    <div class="form-section hidden" id="sectionCpf">
+                        <h3 class="section-title">Dados para Nota Fiscal</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="cpf">CPF *</label>
+                            <input type="text" id="cpf" name="cpf" class="form-input" maxlength="14" required placeholder="000.000.000-00" inputmode="numeric">
+                            <div class="error-message" id="cpfError">Digite um CPF válido</div>
+                        </div>
+                    </div>
+
                     <!-- Seção 2.8: Botão de Continuidade (revelado após CPF válido) -->
                     <div class="button-group hidden" id="sectionButton">
                         <button type="submit" class="btn btn-primary btn-full" id="btnContinuePayment" disabled>
@@ -692,18 +724,25 @@
                     </div>
                     <div class="review-content">
                         <div class="review-grid">
+                            <!-- Seção Dados Pessoais -->
                             <div class="review-section-group">
                                 <div class="review-section-title">Dados Pessoais</div>
                             </div>
-                            
+                            <div>
+                                <div class="review-item-label">Nome</div>
+                                <div class="review-item-value" id="reviewName">-</div>
                             </div>
                             <div>
                                 <div class="review-item-label">E-mail</div>
                                 <div class="review-item-value" id="reviewEmail">-</div>
                             </div>
-                            
+                            <div>
+                                <div class="review-item-label">Telefone</div>
+                                <div class="review-item-value" id="reviewPhone">-</div>
                             </div>
-                            
+                            <div>
+                                <div class="review-item-label">CPF</div>
+                                <div class="review-item-value" id="reviewCpf">-</div>
                             </div>
                             
 
@@ -1619,9 +1658,9 @@ let flowState = {
     emailValid: false,
     cepValid: false,
     shippingSelected: false,
-    personalDataValid: true,
+    personalDataValid: false,
     addressComplementValid: false,
-    cpfValid: true
+    cpfValid: false
 };
 
 // Controle para envio do primeiro email (quando CEP é inserido)
@@ -2358,8 +2397,8 @@ function updateReviewData() {
 
     document.getElementById('reviewName').textContent = `${firstName} ${lastName}`;
     document.getElementById('reviewEmail').textContent = email;
-    
-    
+    document.getElementById('reviewPhone').textContent = phone;
+    document.getElementById('reviewCpf').textContent = cpf;
     
     let fullAddress = `${address}, ${number}`;
     if (complement) fullAddress += ` - ${complement}`;
@@ -2491,8 +2530,18 @@ function validateField(field) {
                     errorMessage = "Digite um e-mail válido";
                 }
                 break;
-            
-            
+            case "cpf":
+                if (!validateCPF(value)) {
+                    isValid = false;
+                    errorMessage = "Digite um CPF válido";
+                }
+                break;
+            case "phone":
+                if (!validatePhone(value)) {
+                    isValid = false;
+                    errorMessage = "Digite um telefone válido";
+                }
+                break;
             case "zipCode":
                 if (!validateZipCode(value)) {
                     isValid = false;
@@ -2601,10 +2650,10 @@ async function handleDeliverySubmit(e) {
         const formData = new FormData(e.target);
         const deliveryData = {
             email: formData.get('email'),
-            firstName: 'Cliente',
-            lastName: 'Site',
-            phone: '00000000000',
-            cpf: '000.000.000-00',
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            phone: formData.get('phone'),
+            cpf: formData.get('cpf'),
             zipCode: formData.get('zipCode'),
             address: formData.get('address'),
             number: formData.get('number'),
