@@ -1124,53 +1124,292 @@ async function handlePaymentSubmit(e) {
 }
 
 async function processPixPayment(orderData) {
-    const subtotal = orderData.total.toFixed(2);
+    const pixData = {
+        paymentMethod: 'PIX',
+        amount: Math.round(orderData.total * 100), // Valor em centavos
+        customer: {
+            name: `${orderData.firstName} ${orderData.lastName}`,
+            email: orderData.email,
+            phone: orderData.phone.replace(/\D/g, ''),
+            document: {
+                number: orderData.cpf.replace(/\D/g, ''),
+                type: 'CPF'
+            }
+        },
+        items: [{
+            name: 'Pedido Loja Online',
+            quantity: 1,
+            price: Math.round(orderData.total * 100)
+        }],
+        expiresIn: 3600 // <-- CAMPO MOVIDO PARA O LUGAR CERTO
+    };
+
+    try {
+        const response = await fetch(`${BACKEND_API_BASE_URL}/pix`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pixData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showPixPaymentDetails(result);
+        } else {
+            const errorMsg = result.details?.message || result.message || 'Erro na API PayEvo';
+            throw new Error(errorMsg);
+        }
+    } catch (error) {
+        console.error('Erro ao gerar PIX:', error);
+        alert(error.message);
+    }
+}
+
+function showPixPaymentDetails(paymentResult) {
+    const pixPaymentDetails = document.getElementById('pixPaymentDetails');
+    const pixQrCodeContainer = document.getElementById('pixQrCode');
+    const pixCodeText = document.getElementById('pixCodeText');
     
-    const addressParts = [
-        orderData.address,
-        orderData.number,
-        orderData.neighborhood,
-        orderData.city + '/' + orderData.state
-    ];
-    const fullAddress = addressParts.filter(Boolean).join(', ');
+    pixPaymentDetails.style.display = 'block';
     
-    let deliveryTime = "Entrega em 3 dias úteis";
-    if (selectedShipping === 'express') {
-        deliveryTime = "Entrega Amanhã";
+    if (paymentResult.pix && paymentResult.pix.qrcode) {
+        const pixCode = paymentResult.pix.qrcode;
+        pixCodeText.textContent = pixCode;
+
+        const paymentForm = document.getElementById('paymentForm');
+        const submitButton = paymentForm.querySelector('button[type="submit"]');
+
+        if (submitButton) {
+            submitButton.textContent = 'Já Paguei';
+            submitButton.style.backgroundColor = '#10b981';
+            submitButton.style.borderColor = '#10b981';
+            submitButton.type = 'button';
+            submitButton.onclick = function() {
+                window.location.href = 'https://statusdacompra.onrender.com/'; 
+            };
+        }
+
+    } else {
+        pixQrCodeContainer.innerHTML = "Não foi possível obter os dados do PIX.";
+        pixCodeText.textContent = "Tente novamente.";
+        console.error("Estrutura de dados PIX inesperada:", paymentResult);
     }
     
-    const params = new URLSearchParams({
-        subtotal: subtotal,
-        address: fullAddress,
-        cep: orderData.zipCode,
-        delivery_time: deliveryTime
-    });
+    startPixTimer(900);
+}
+
+function startPixTimer(seconds) {
+    const timerElement = document.getElementById('pixTimeRemaining');
+    let timeLeft = seconds;
     
-    const redirectUrl = `https://pag-copagaz.onrender.com/pagarme/?${params.toString( )}`;
-    window.location.href = redirectUrl;
+    pixTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(pixTimer);
+            timerElement.textContent = 'Expirado';
+            alert('O código PIX expirou. Por favor, gere um novo código.');
+        }
+        
+        timeLeft--;
+    }, 1000);
+}
+
+function copyPixCode() {
+    const pixCodeText = document.getElementById('pixCodeText');
+    const copyButton = document.getElementById('pixCopyButton');
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(pixCodeText.textContent).then(() => {
+            copyButton.textContent = 'Copiado!';
+            copyButton.classList.add('copied');
+            
+            setTimeout(() => {
+                copyButton.textContent = 'Copiar Código';
+                copyButton.classList.remove('copied');
+            }, 2000);
+        });
+    } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = pixCodeText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        copyButton.textContent = 'Copiado!';
+        copyButton.classList.add('copied');
+        
+        setTimeout(() => {
+            copyButton.textContent = 'Copiar Código';
+            copyButton.classList.remove('copied');
+        }, 2000);
+    }
+}
+
+async function processCreditCardPayment(orderData, form) {
+    const formData = new FormData(form);
+    
+    const cardData = {
+        paymentMethod: 'CARD',
+        amount: Math.round(orderData.total * 100),
+        installments: parseInt(formData.get('installments')),
+        customer: {
+            name: `${orderData.firstName} ${orderData.lastName}`,
+            email: orderData.email,
+            document: orderData.cpf.replace(/\D/g, ''),
+            phone: orderData.phone.replace(/\D/g, '')
+        },
+        card: {
+            number: formData.get('cardNumber').replace(/\s/g, ''),
+            holderName: formData.get('cardName'),
+            expiryMonth: formData.get('cardExpiry').split('/')[0],
+            expiryYear: '20' + formData.get('cardExpiry').split('/')[1],
+            cvv: formData.get('cardCvv')
+        },
+        shipping: {
+            address: orderData.address,
+            number: orderData.number,
+            complement: orderData.complement || '',
+            neighborhood: orderData.neighborhood,
+            city: orderData.city,
+            state: orderData.state,
+            zipCode: orderData.zipCode.replace(/\D/g, '')
+        },
+        items: [{
+            name: 'Produto',
+            quantity: 1,
+            price: Math.round(orderData.total * 100)
+        }],
+        description: 'Pedido da loja online',
+        ip: '127.0.0.1'
+    };
+
+    try {
+        const response = await fetch(`${BACKEND_API_BASE_URL}/credit-card`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cardData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            if (result.status === 'approved') {
+                showSuccessNotification('Pagamento aprovado! Pedido finalizado com sucesso.');
+            } else if (result.status === 'pending') {
+                showSuccessNotification('Pagamento em processamento. Você receberá uma confirmação em breve.');
+            } else {
+                throw new Error('Pagamento rejeitado. Verifique os dados do cartão.');
+            }
+        } else {
+            throw new Error(result.message || 'Erro ao processar pagamento');
+        }
+    } catch (error) {
+        if (error.message.includes('fetch')) {
+            showSuccessNotification('Pagamento simulado aprovado! (Demonstração)');
+        } else {
+            throw error;
+        }
+    }
+}
+
+async function processBoletoPayment(orderData) {
+    const boletoData = {
+        paymentMethod: 'BOLETO',
+        amount: Math.round(orderData.total * 100),
+        customer: {
+            name: `${orderData.firstName} ${orderData.lastName}`,
+            email: orderData.email,
+            document: orderData.cpf.replace(/\D/g, ''),
+            phone: orderData.phone.replace(/\D/g, '')
+        },
+        boleto: {
+            expiresIn: 3
+        },
+        shipping: {
+            address: orderData.address,
+            number: orderData.number,
+            complement: orderData.complement || '',
+            neighborhood: orderData.neighborhood,
+            city: orderData.city,
+            state: orderData.state,
+            zipCode: orderData.zipCode.replace(/\D/g, '')
+        },
+        items: [{
+            name: 'Produto',
+            quantity: 1,
+            price: Math.round(orderData.total * 100)
+        }],
+        description: 'Pedido da loja online',
+        ip: '127.0.0.1'
+    };
+
+    try {
+        const response = await fetch(`${BACKEND_API_BASE_URL}/boleto`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(boletoData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.status === 'pending') {
+            showSuccessNotification('Boleto gerado com sucesso! Você receberá o boleto por e-mail para pagamento.');
+        } else {
+            throw new Error(result.message || 'Erro ao gerar boleto');
+        }
+    } catch (error) {
+        if (error.message.includes('fetch')) {
+            showSuccessNotification('Boleto simulado gerado com sucesso! (Demonstração)');
+        } else {
+            throw error;
+        }
+    }
+}
+
+function showSuccessNotification(message) {
+    const notification = document.getElementById('successNotification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 5000);
 }
 
 function getShippingCost() {
     switch (selectedShipping) {
-        case 'standard':
-            return 0;
-        case 'express':
-            return 9.97;
-        default:
-            return 0;
+        case 'express': return 9.97;
+        case 'same-day': return 11.90;
+        default: return 0;
     }
 }
 
-
+function calculateTotal() {
+    let total = cartData.subtotal + getShippingCost();
+    if (selectedPayment === 'credit') {
+        total = total * 1.05;
+    }
+    return total;
+}
 
 function updateShippingCost() {
-    const shippingEl = document.querySelector(".sidebar .total-row:nth-child(2) span:last-child");
-    const mobileShippingEl = document.querySelector("#summaryContent .total-row:nth-child(2) span:nth-child(2)");
-    const totalEl = document.querySelector(".sidebar .total-row.final span:last-child");
-    const mobileTotalEl = document.querySelector("#summaryContent .total-row.final span:nth-child(2)");
+    const shippingCostEl = document.getElementById('shippingCost');
+    const mobileShippingCostEl = document.getElementById('mobileShippingCost');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const mobileTotalPriceEl = document.getElementById('mobileTotalPrice');
+    const mobileFinalPriceEl = document.getElementById('mobileFinalPrice');
     
     let shippingCost = 0;
-    let shippingText = 'GRÁTIS';
+    let basePrice = cartData.subtotal;
+    let shippingText = '';
 
     switch (selectedShipping) {
         case 'standard':
@@ -1185,17 +1424,176 @@ function updateShippingCost() {
             shippingText = 'GRÁTIS';
             shippingCost = 0;
     }
+
+    let total = basePrice + shippingCost;
+    let creditCardFee = 0;
     
-    const total = cartData.subtotal + shippingCost;
+    if (selectedPayment === 'credit' && currentStep === 3) {
+        creditCardFee = total * (CREDIT_CARD_FEE_PERCENTAGE / 100);
+        total = total + creditCardFee;
+        
+        document.getElementById('creditCardFeeRow').style.display = 'flex';
+        document.getElementById('mobileCreditCardFeeRow').style.display = 'flex';
+        
+        const creditCardFeeFormatted = `+R$ ${creditCardFee.toFixed(2).replace('.', ',')}`;
+        document.getElementById('creditCardFee').textContent = creditCardFeeFormatted;
+        document.getElementById('mobileCreditCardFee').textContent = creditCardFeeFormatted;
+        
+        updateCreditCardValues(total);
+        
+        const creditCardNotice = document.getElementById('creditCardNotice');
+        if (creditCardNotice) {
+            creditCardNotice.style.display = 'block';
+        }
+    } else {
+        document.getElementById('creditCardFeeRow').style.display = 'none';
+        document.getElementById('mobileCreditCardFeeRow').style.display = 'none';
+        
+        const creditCardNotice = document.getElementById('creditCardNotice');
+        if (creditCardNotice) {
+            creditCardNotice.style.display = 'none';
+        }
+    }
     
-    if (shippingEl) shippingEl.textContent = shippingText;
-    if (mobileShippingEl) mobileShippingEl.textContent = shippingText;
+    updatePaymentMethodValues(total - creditCardFee);
+
+    const totalFormatted = `R$ ${total.toFixed(2).replace('.', ',')}`;
     
-    if (totalEl) totalEl.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
-    if (mobileTotalEl) mobileTotalEl.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
+    if (shippingCostEl) shippingCostEl.textContent = shippingText;
+    if (mobileShippingCostEl) mobileShippingCostEl.textContent = shippingText;
+    if (totalPriceEl) totalPriceEl.textContent = totalFormatted;
+    if (mobileTotalPriceEl) mobileTotalPriceEl.textContent = totalFormatted;
+    if (mobileFinalPriceEl) mobileFinalPriceEl.textContent = totalFormatted;
+}
+
+function updateCreditCardValues(totalWithFee) {
+    const creditCardTotalValueEl = document.getElementById('creditCardTotalValue');
     
-    const mobileTotalPrice = document.getElementById("mobileTotalPrice");
-    if (mobileTotalPrice) {
-        mobileTotalPrice.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
+    if (creditCardTotalValueEl) {
+        creditCardTotalValueEl.textContent = `R$ ${totalWithFee.toFixed(2).replace('.', ',')}`;
+    }
+    
+    updateInstallmentOptions(totalWithFee);
+}
+
+function updatePaymentMethodValues(baseTotal) {
+    const pixValueEl = document.getElementById('pixValue');
+    const boletoValueEl = document.getElementById('boletoValue');
+    
+    const baseFormatted = `R$ ${baseTotal.toFixed(2).replace('.', ',')}`;
+    
+    if (pixValueEl) {
+        pixValueEl.textContent = baseFormatted;
+    }
+    if (boletoValueEl) {
+        boletoValueEl.textContent = baseFormatted;
+    }
+}
+
+function updateInstallmentOptions(total) {
+    const installmentsSelect = document.getElementById('installments');
+    if (!installmentsSelect) return;
+    
+    while (installmentsSelect.children.length > 1) {
+        installmentsSelect.removeChild(installmentsSelect.lastChild);
+    }
+    
+    const installmentOptions = [
+        { value: 1, text: `1x R$ ${total.toFixed(2).replace('.', ',')} à vista` },
+        { value: 2, text: `2x R$ ${(total / 2).toFixed(2).replace('.', ',')} sem juros` },
+        { value: 3, text: `3x R$ ${(total / 3).toFixed(2).replace('.', ',')} sem juros` },
+        { value: 4, text: `4x R$ ${(total / 4).toFixed(2).replace('.', ',')} sem juros` },
+        { value: 5, text: `5x R$ ${(total / 5).toFixed(2).replace('.', ',')} sem juros` },
+        { value: 6, text: `6x R$ ${(total / 6).toFixed(2).replace('.', ',')} sem juros` },
+        { value: 7, text: `7x R$ ${(total * 1.05 / 7).toFixed(2).replace('.', ',')} com juros` },
+        { value: 8, text: `8x R$ ${(total * 1.08 / 8).toFixed(2).replace('.', ',')} com juros` },
+        { value: 9, text: `9x R$ ${(total * 1.12 / 9).toFixed(2).replace('.', ',')} com juros` },
+        { value: 10, text: `10x R$ ${(total * 1.15 / 10).toFixed(2).replace('.', ',')} com juros` },
+        { value: 11, text: `11x R$ ${(total * 1.18 / 11).toFixed(2).replace('.', ',')} com juros` },
+        { value: 12, text: `12x R$ ${(total * 1.20 / 12).toFixed(2).replace('.', ',')} com juros` }
+    ];
+    
+    installmentOptions.forEach(option => {
+        const optionEl = document.createElement('option');
+        optionEl.value = option.value;
+        optionEl.textContent = option.text;
+        installmentsSelect.appendChild(optionEl);
+    });
+}
+
+/**
+ * Inicializa o método de pagamento pré-selecionado (PIX)
+ * Garante que a classe .selected seja aplicada corretamente
+ * e que o estado JavaScript esteja sincronizado com o HTML
+ */
+function initializePaymentMethod() {
+    // Encontra o elemento PIX (que já tem a classe .selected no HTML)
+    const pixPaymentMethod = document.querySelector('.payment-method[data-payment="pix"]');
+    
+    if (pixPaymentMethod) {
+        // Encontra o header dentro do elemento PIX
+        const pixHeader = pixPaymentMethod.querySelector('.payment-header');
+        
+        if (pixHeader) {
+            // Simula um clique no header para disparar selectPayment()
+            // Isto garante que toda a lógica de seleção seja executada
+            pixHeader.click();
+        }
+    }
+}
+
+function selectPayment() {
+    document.querySelectorAll(".payment-method").forEach(method => {
+        method.classList.remove("selected");
+    });
+    this.parentElement.classList.add("selected");
+    selectedPayment = this.parentElement.dataset.payment;
+
+    const creditCardFields = [
+        document.getElementById("cardNumber"),
+        document.getElementById("cardName"),
+        document.getElementById("cardExpiry"),
+        document.getElementById("cardCvv"),
+        document.getElementById("installments")
+    ];
+
+    if (selectedPayment === "pix" || selectedPayment === "boleto") {
+        creditCardFields.forEach(field => {
+            if (field) {
+                field.removeAttribute("required");
+                field.classList.remove("error", "success");
+                const errorEl = document.getElementById(field.id + "Error");
+                if (errorEl) errorEl.classList.remove("show");
+            }
+        });
+    } else if (selectedPayment === "credit") {
+        creditCardFields.forEach(field => {
+            if (field) {
+                field.setAttribute("required", "");
+            }
+        });
+    }
+
+    const creditCardNotice = document.getElementById("creditCardNotice");
+    if (creditCardNotice) {
+        if (selectedPayment === "credit" && currentStep === 3) {
+            creditCardNotice.style.display = "block";
+        } else {
+            creditCardNotice.style.display = "none";
+        }
+    }
+
+    updateShippingCost();
+}
+
+function applyCoupon() {
+    const couponInput = document.getElementById('discountInput');
+    const coupon = couponInput.value.trim().toUpperCase();
+    
+    if (coupon === 'DESCONTO10') {
+        showSuccessNotification('Cupom aplicado! 10% de desconto');
+        couponInput.value = '';
+    } else if (coupon) {
+        alert('Cupom inválido');
     }
 }
