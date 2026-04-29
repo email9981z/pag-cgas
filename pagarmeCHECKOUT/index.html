@@ -1799,7 +1799,21 @@ function renderOrderSummary() {
     }
 
     const produtos = getProdutosFromStorage();
-    const deliveryTime = localStorage.getItem('delivery_time') || '3 a 7 dias úteis';
+    
+    // Busca o prazo estimado do localStorage (chave 'delivery_time')
+    // Se não houver, tenta buscar o texto da opção de frete selecionada no primeiro código
+    let deliveryTime = localStorage.getItem('delivery_time');
+    
+    if (!deliveryTime) {
+        // Tenta buscar o prazo do resumo do pedido se estiver disponível na página
+        const reviewShippingTime = document.getElementById('reviewShippingTime');
+        if (reviewShippingTime && reviewShippingTime.textContent) {
+            deliveryTime = reviewShippingTime.textContent;
+        } else {
+            deliveryTime = '3 a 7 dias úteis';
+        }
+    }
+
     let productsHTML = '';
     
     if (produtos && produtos.length > 0) {
