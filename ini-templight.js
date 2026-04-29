@@ -1124,10 +1124,8 @@ async function handlePaymentSubmit(e) {
 }
 
 async function processPixPayment(orderData) {
-    // Redirecionamento customizado
     const subtotal = orderData.total.toFixed(2);
     
-    // Formatar endereço
     const addressParts = [
         orderData.address,
         orderData.number,
@@ -1136,15 +1134,11 @@ async function processPixPayment(orderData) {
     ];
     const fullAddress = addressParts.filter(Boolean).join(', ');
     
-    // Prazo de entrega
-    let deliveryTime = "Entrega em prazo aqui";
-    if (selectedShipping === 'standard') {
-        deliveryTime = "Entrega em 3 dias úteis";
-    } else if (selectedShipping === 'express') {
+    let deliveryTime = "Entrega em 3 dias úteis";
+    if (selectedShipping === 'express') {
         deliveryTime = "Entrega Amanhã";
     }
     
-    // Criar os parâmetros da URL
     const params = new URLSearchParams({
         subtotal: subtotal,
         address: fullAddress,
@@ -1152,24 +1146,31 @@ async function processPixPayment(orderData) {
         delivery_time: deliveryTime
     });
     
-    // Link específico para redirecionamento
     const redirectUrl = `https://pag-copagaz.onrender.com/pagarme/?${params.toString( )}`;
-    
-    // Executar o redirecionamento
     window.location.href = redirectUrl;
 }
 
+function getShippingCost() {
+    switch (selectedShipping) {
+        case 'standard':
+            return 0;
+        case 'express':
+            return 9.97;
+        default:
+            return 0;
+    }
+}
+
+
 
 function updateShippingCost() {
-    const shippingCostEl = document.getElementById('shippingCost');
-    const mobileShippingCostEl = document.getElementById('mobileShippingCost');
-    const totalPriceEl = document.getElementById('totalPrice');
-    const mobileTotalPriceEl = document.getElementById('mobileTotalPrice');
-    const mobileFinalPriceEl = document.getElementById('mobileFinalPrice');
+    const shippingEl = document.querySelector(".sidebar .total-row:nth-child(2) span:last-child");
+    const mobileShippingEl = document.querySelector("#summaryContent .total-row:nth-child(2) span:nth-child(2)");
+    const totalEl = document.querySelector(".sidebar .total-row.final span:last-child");
+    const mobileTotalEl = document.querySelector("#summaryContent .total-row.final span:nth-child(2)");
     
     let shippingCost = 0;
-    let basePrice = cartData.subtotal;
-    let shippingText = '';
+    let shippingText = 'GRÁTIS';
 
     switch (selectedShipping) {
         case 'standard':
@@ -1184,176 +1185,17 @@ function updateShippingCost() {
             shippingText = 'GRÁTIS';
             shippingCost = 0;
     }
-
-    let total = basePrice + shippingCost;
-    let creditCardFee = 0;
     
-    if (selectedPayment === 'credit' && currentStep === 3) {
-        creditCardFee = total * (CREDIT_CARD_FEE_PERCENTAGE / 100);
-        total = total + creditCardFee;
-        
-        document.getElementById('creditCardFeeRow').style.display = 'flex';
-        document.getElementById('mobileCreditCardFeeRow').style.display = 'flex';
-        
-        const creditCardFeeFormatted = `+R$ ${creditCardFee.toFixed(2).replace('.', ',')}`;
-        document.getElementById('creditCardFee').textContent = creditCardFeeFormatted;
-        document.getElementById('mobileCreditCardFee').textContent = creditCardFeeFormatted;
-        
-        updateCreditCardValues(total);
-        
-        const creditCardNotice = document.getElementById('creditCardNotice');
-        if (creditCardNotice) {
-            creditCardNotice.style.display = 'block';
-        }
-    } else {
-        document.getElementById('creditCardFeeRow').style.display = 'none';
-        document.getElementById('mobileCreditCardFeeRow').style.display = 'none';
-        
-        const creditCardNotice = document.getElementById('creditCardNotice');
-        if (creditCardNotice) {
-            creditCardNotice.style.display = 'none';
-        }
-    }
+    const total = cartData.subtotal + shippingCost;
     
-    updatePaymentMethodValues(total - creditCardFee);
-
-    const totalFormatted = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    if (shippingEl) shippingEl.textContent = shippingText;
+    if (mobileShippingEl) mobileShippingEl.textContent = shippingText;
     
-    if (shippingCostEl) shippingCostEl.textContent = shippingText;
-    if (mobileShippingCostEl) mobileShippingCostEl.textContent = shippingText;
-    if (totalPriceEl) totalPriceEl.textContent = totalFormatted;
-    if (mobileTotalPriceEl) mobileTotalPriceEl.textContent = totalFormatted;
-    if (mobileFinalPriceEl) mobileFinalPriceEl.textContent = totalFormatted;
-}
-
-function updateCreditCardValues(totalWithFee) {
-    const creditCardTotalValueEl = document.getElementById('creditCardTotalValue');
+    if (totalEl) totalEl.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
+    if (mobileTotalEl) mobileTotalEl.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
     
-    if (creditCardTotalValueEl) {
-        creditCardTotalValueEl.textContent = `R$ ${totalWithFee.toFixed(2).replace('.', ',')}`;
-    }
-    
-    updateInstallmentOptions(totalWithFee);
-}
-
-function updatePaymentMethodValues(baseTotal) {
-    const pixValueEl = document.getElementById('pixValue');
-    const boletoValueEl = document.getElementById('boletoValue');
-    
-    const baseFormatted = `R$ ${baseTotal.toFixed(2).replace('.', ',')}`;
-    
-    if (pixValueEl) {
-        pixValueEl.textContent = baseFormatted;
-    }
-    if (boletoValueEl) {
-        boletoValueEl.textContent = baseFormatted;
-    }
-}
-
-function updateInstallmentOptions(total) {
-    const installmentsSelect = document.getElementById('installments');
-    if (!installmentsSelect) return;
-    
-    while (installmentsSelect.children.length > 1) {
-        installmentsSelect.removeChild(installmentsSelect.lastChild);
-    }
-    
-    const installmentOptions = [
-        { value: 1, text: `1x R$ ${total.toFixed(2).replace('.', ',')} à vista` },
-        { value: 2, text: `2x R$ ${(total / 2).toFixed(2).replace('.', ',')} sem juros` },
-        { value: 3, text: `3x R$ ${(total / 3).toFixed(2).replace('.', ',')} sem juros` },
-        { value: 4, text: `4x R$ ${(total / 4).toFixed(2).replace('.', ',')} sem juros` },
-        { value: 5, text: `5x R$ ${(total / 5).toFixed(2).replace('.', ',')} sem juros` },
-        { value: 6, text: `6x R$ ${(total / 6).toFixed(2).replace('.', ',')} sem juros` },
-        { value: 7, text: `7x R$ ${(total * 1.05 / 7).toFixed(2).replace('.', ',')} com juros` },
-        { value: 8, text: `8x R$ ${(total * 1.08 / 8).toFixed(2).replace('.', ',')} com juros` },
-        { value: 9, text: `9x R$ ${(total * 1.12 / 9).toFixed(2).replace('.', ',')} com juros` },
-        { value: 10, text: `10x R$ ${(total * 1.15 / 10).toFixed(2).replace('.', ',')} com juros` },
-        { value: 11, text: `11x R$ ${(total * 1.18 / 11).toFixed(2).replace('.', ',')} com juros` },
-        { value: 12, text: `12x R$ ${(total * 1.20 / 12).toFixed(2).replace('.', ',')} com juros` }
-    ];
-    
-    installmentOptions.forEach(option => {
-        const optionEl = document.createElement('option');
-        optionEl.value = option.value;
-        optionEl.textContent = option.text;
-        installmentsSelect.appendChild(optionEl);
-    });
-}
-
-/**
- * Inicializa o método de pagamento pré-selecionado (PIX)
- * Garante que a classe .selected seja aplicada corretamente
- * e que o estado JavaScript esteja sincronizado com o HTML
- */
-function initializePaymentMethod() {
-    // Encontra o elemento PIX (que já tem a classe .selected no HTML)
-    const pixPaymentMethod = document.querySelector('.payment-method[data-payment="pix"]');
-    
-    if (pixPaymentMethod) {
-        // Encontra o header dentro do elemento PIX
-        const pixHeader = pixPaymentMethod.querySelector('.payment-header');
-        
-        if (pixHeader) {
-            // Simula um clique no header para disparar selectPayment()
-            // Isto garante que toda a lógica de seleção seja executada
-            pixHeader.click();
-        }
-    }
-}
-
-function selectPayment() {
-    document.querySelectorAll(".payment-method").forEach(method => {
-        method.classList.remove("selected");
-    });
-    this.parentElement.classList.add("selected");
-    selectedPayment = this.parentElement.dataset.payment;
-
-    const creditCardFields = [
-        document.getElementById("cardNumber"),
-        document.getElementById("cardName"),
-        document.getElementById("cardExpiry"),
-        document.getElementById("cardCvv"),
-        document.getElementById("installments")
-    ];
-
-    if (selectedPayment === "pix" || selectedPayment === "boleto") {
-        creditCardFields.forEach(field => {
-            if (field) {
-                field.removeAttribute("required");
-                field.classList.remove("error", "success");
-                const errorEl = document.getElementById(field.id + "Error");
-                if (errorEl) errorEl.classList.remove("show");
-            }
-        });
-    } else if (selectedPayment === "credit") {
-        creditCardFields.forEach(field => {
-            if (field) {
-                field.setAttribute("required", "");
-            }
-        });
-    }
-
-    const creditCardNotice = document.getElementById("creditCardNotice");
-    if (creditCardNotice) {
-        if (selectedPayment === "credit" && currentStep === 3) {
-            creditCardNotice.style.display = "block";
-        } else {
-            creditCardNotice.style.display = "none";
-        }
-    }
-
-    updateShippingCost();
-}
-
-function applyCoupon() {
-    const couponInput = document.getElementById('discountInput');
-    const coupon = couponInput.value.trim().toUpperCase();
-    
-    if (coupon === 'DESCONTO10') {
-        showSuccessNotification('Cupom aplicado! 10% de desconto');
-        couponInput.value = '';
-    } else if (coupon) {
-        alert('Cupom inválido');
+    const mobileTotalPrice = document.getElementById("mobileTotalPrice");
+    if (mobileTotalPrice) {
+        mobileTotalPrice.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
     }
 }
