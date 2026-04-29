@@ -1617,7 +1617,15 @@
 
         const subtotalFromUrl = getUrlParameter('subtotal');
         const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
-        const subtotalValue = productInfo.value ? parseFloat(productInfo.value) : (subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47);
+        const cartProductsJSON = localStorage.getItem('cart_products');
+        
+        let subtotalValue = 0;
+        if (cartProductsJSON) {
+            const products = JSON.parse(cartProductsJSON);
+            subtotalValue = products.reduce((acc, product) => acc + (parseFloat(product.v) * parseInt(product.q)), 0);
+        } else {
+            subtotalValue = productInfo.value ? parseFloat(productInfo.value) : (subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47);
+        }
 
         if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'public_xxx') {
             emailjs.init(EMAILJS_PUBLIC_KEY);
