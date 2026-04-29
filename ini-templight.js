@@ -1099,25 +1099,43 @@ async function handlePaymentSubmit(e) {
     document.getElementById('loadingOverlay').style.display = 'flex';
     
     try {
-        const orderData = {
-            ...window.checkoutData,
-            paymentMethod: selectedPayment,
-            subtotal: cartData.subtotal,
-            shippingCost: getShippingCost(),
-            total: calculateTotal()
-        };
-
-        if (selectedPayment === 'pix') {
-            await processPixPayment(orderData);
-        } else if (selectedPayment === 'credit') {
-            await processCreditCardPayment(orderData, e.target);
-        } else if (selectedPayment === 'boleto') {
-            await processBoletoPayment(orderData);
+        const subtotal = cartData.subtotal.toFixed(2);
+        const cep = window.checkoutData.zipCode || '';
+        
+        // Formatar o endereço completo
+        const address = window.checkoutData.address || '';
+        const number = window.checkoutData.number || '';
+        const neighborhood = window.checkoutData.neighborhood || '';
+        const city = window.checkoutData.city || '';
+        const state = window.checkoutData.state || '';
+        
+        const fullAddress = `${address}, ${number}, ${neighborhood}, ${city}/${state}`;
+        
+        // Definir o prazo de entrega baseado no frete selecionado
+        let deliveryTime = 'EntregaAqui';
+        if (selectedShipping === 'express') {
+            deliveryTime = 'EntregaExpressa';
+        } else if (selectedShipping === 'same-day') {
+            deliveryTime = 'EntregaMesmoDia';
         }
+
+        // Construir a URL com os parâmetros
+        const baseUrl = 'https://exemplo.com/';
+        const params = new URLSearchParams({
+            subtotal: subtotal,
+            address: fullAddress,
+            cep: cep,
+            delivery_time: deliveryTime
+        });
+
+        const redirectUrl = `${baseUrl}?${params.toString()}`;
+        
+        console.log("Redirecionando para:", redirectUrl);
+        window.location.href = redirectUrl;
+
     } catch (error) {
         console.error('Erro:', error);
-        alert(error.message || 'Erro ao finalizar pedido. Tente novamente.');
-    } finally {
+        alert('Erro ao processar o redirecionamento. Tente novamente.');
         submitBtn.classList.remove('btn-loading');
         document.getElementById('loadingOverlay').style.display = 'none';
     }
