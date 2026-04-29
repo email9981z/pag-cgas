@@ -1768,35 +1768,37 @@ function renderOrderSummary() {
     <div class="order-info-label">Previsão de Entrega</div>
     <div class="order-info-text-delivery">${deliveryTime}</div>
     
-    <!-- Bloco do Vendedor Refinado -->
+    <!-- Bloco do Vendedor com Contraste Suavizado -->
     <div style="display: block !important; margin-top: 10px !important; padding-top: 8px !important; border-top: 1px solid rgba(0,0,0,0.06) !important;">
-        <span style="display: block !important; font-size: 10px !important; color: #64748b !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; margin-bottom: 4px !important; font-family: sans-serif !important;">
+        <span style="display: block !important; font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; margin-bottom: 4px !important; font-family: sans-serif !important;">
             Vendedor acionado próximo a você:
         </span>
         
         <div style="display: flex !important; align-items: center !important; gap: 8px !important;">
-            <span style="font-size: 14px !important; color: #475569 !important; font-weight: 600 !important; font-family: sans-serif !important;">
+            <span style="font-size: 13px !important; color: #64748b !important; font-weight: 500 !important; font-family: sans-serif !important;">
                 Thiago Callegari
             </span>
             
-            <!-- Etiqueta Autorizado -->
+            <!-- Etiqueta Autorizado Sutil -->
             <div style="
                 display: flex !important;
                 align-items: center !important;
                 background-color: #0054a6 !important;
                 padding: 2px 6px !important;
                 border-radius: 4px !important;
+                opacity: 0.9 !important;
             ">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org" style="margin-right: 3px !important;">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org" style="margin-right: 3px !important;">
                     <path d="M12 2L13.2 4.6L16 5.2L16.4 8L19 9.5L18.2 12.3L19 15.1L16.4 16.6L16 19.4L13.2 20L12 22.6L10.8 20L8 19.4L7.6 16.6L5 15.1L5.8 12.3L5 9.5L7.6 8L8 5.2L10.8 4.6L12 2Z" fill="white"/>
                 </svg>
-                <span style="color: white !important; font-size: 9px !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: 0.3px !important;">
+                <span style="color: white !important; font-size: 8px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.3px !important;">
                     Autorizado
                 </span>
             </div>
         </div>
     </div>
 </div>
+
 
     `;
     document.getElementById('order-summary-wrapper').innerHTML = orderHTML;
