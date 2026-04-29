@@ -2142,84 +2142,51 @@ function renderOrderSummary() {
         </button>
 
 <div class="pix-modal-header">
-    <!-- Ícone de Check do Sistema -->
     <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 12px auto !important; color: #2d8a4e; font-size: 30px;"></i>
-    <h2 style="margin: 0 0 20px 0 !important; font-family: 'Segoe UI', system-ui, sans-serif !important; color: #334155 !important; font-weight: 700 !important; letter-spacing: -0.5px !important;">Código Pix Copiado!</h2>
+    <h2 style="margin: 0 0 20px 0 !important; font-family: 'Segoe UI', sans-serif !important; color: #334155 !important; font-weight: 700 !important;">Código Pix Copiado!</h2>
     
-    <!-- Container Harmônico e Blindado -->
+    <!-- Container Estilo "Cartão de Identificação" -->
     <div style="
         all: initial !important;
         display: flex !important;
         align-items: center !important;
-        gap: 16px !important;
-        background-color: #f8fafc !important;
+        gap: 12px !important;
+        background-color: #f1f5f9 !important; /* Fundo levemente mais escuro para destaque */
         border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        padding: 14px 18px !important;
+        border-radius: 10px !important;
+        padding: 12px !important;
         margin: 15px 0 !important;
         width: 100% !important;
         box-sizing: border-box !important;
         font-family: 'Segoe UI', Roboto, sans-serif !important;
-        text-align: left !important;
     ">
-        <!-- Selo de Identidade SVG -->
-        <div style="flex-shrink: 0 !important; display: flex !important;">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <rect width="24" height="24" rx="12" fill="#0054a6" fill-opacity="0.08"/>
-                <path d="M12 2L13.2 4.6L16 5.2L16.4 8L19 9.5L18.2 12.3L19 15.1L16.4 16.6L16 19.4L13.2 20L12 22.6L10.8 20L8 19.4L7.6 16.6L5 15.1L5.8 12.3L5 9.5L7.6 8L8 5.2L10.8 4.6L12 2Z" fill="#0054a6"/>
-                <path d="M9 12.5L11 14.5L15.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Ícone de Crachá/ID Profissional -->
+        <div style="flex-shrink: 0 !important; background: #0054a6 !important; width: 40px !important; height: 40px !important; border-radius: 8px !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M7 14.5C7 13.1193 8.11929 12 9.5 12H14.5C15.8807 12 17 13.1193 17 14.5V16H7V14.5Z" fill="white"/>
+                <circle cx="12" cy="9" r="2" fill="white"/>
+                <path d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z" stroke="white" stroke-width="2"/>
             </svg>
         </div>
 
-        <div style="display: flex !important; flex-direction: column !important; gap: 4px !important; line-height: 1.2 !important;">
-            <!-- Subtítulo em Cinza Azulado -->
-            <span style="
-                display: block !important;
-                color: #64748b !important;
-                font-size: 11px !important;
-                font-weight: 500 !important;
-                letter-spacing: 0.2px !important;
-                margin: 0 !important;
-            ">Vendedor acionado em sua Região:</span>
+        <div style="display: flex !important; flex-direction: column !important; gap: 2px !important; text-align: left !important;">
+            <!-- Rótulo Inequívoco -->
+            <span style="display: block !important; color: #64748b !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important;">
+                Profissional Designado:
+            </span>
             
-            <!-- Nome com Contraste Suavizado -->
-            <span style="
-                display: block !important;
-                color: #475569 !important; 
-                font-size: 16px !important;
-                font-weight: 600 !important;
-                margin: 0 !important;
-            ">Thiago Callegari</span>
+            <span style="display: block !important; color: #334155 !important; font-size: 15px !important; font-weight: 700 !important; margin-bottom: 4px !important;">
+                Thiago Callegari
+            </span>
 
-            <!-- Duas Etiquetas Estilo Ultragaz -->
-            <div style="display: flex !important; align-items: center !important; gap: 6px !important; margin-top: 2px !important;">
-                <!-- Tag Ultragaz -->
-                <span style="
-                    background-color: #0054a6 !important;
-                    color: #ffffff !important;
-                    font-size: 9px !important;
-                    font-weight: 800 !important;
-                    text-transform: uppercase !important;
-                    padding: 2px 7px !important;
-                    border-radius: 4px !important;
-                    letter-spacing: 0.5px !important;
-                ">Ultragaz</span>
-                
-                <!-- Tag Vendedor (Cor Harmônica Verde Esmeralda) -->
-                <span style="
-                    background-color: #2d8a4e !important;
-                    color: #ffffff !important;
-                    font-size: 9px !important;
-                    font-weight: 800 !important;
-                    text-transform: uppercase !important;
-                    padding: 2px 7px !important;
-                    border-radius: 4px !important;
-                    letter-spacing: 0.5px !important;
-                ">Vendedor</span>
+            <div style="display: flex !important; align-items: center !important; gap: 5px !important;">
+                <span style="background-color: #0054a6 !important; color: #ffffff !important; font-size: 9px !important; font-weight: 800 !important; padding: 2px 6px !important; border-radius: 3px !important; text-transform: uppercase !important;">Ultragaz</span>
+                <span style="background-color: #2d8a4e !important; color: #ffffff !important; font-size: 9px !important; font-weight: 800 !important; padding: 2px 6px !important; border-radius: 3px !important; text-transform: uppercase !important;">Vendedor Oficial</span>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
