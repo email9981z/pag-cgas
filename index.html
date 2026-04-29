@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -516,9 +515,6 @@
             </div>
             <div class="summary-content expanded" id="summaryContent">
                 <div class="summary-content-inner">
-					 <div id="mobileProductsList" style="margin-bottom: 20px; border-bottom: 1px solid #eee;">
-            <!-- Os produtos do localStorage serão injetados aqui -->
-        </div>
                     <div class="order-totals">
                         <div class="total-row">
                             <span>Frete</span>
@@ -1526,9 +1522,11 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function renderReviewProducts() {
     var reviewProductsList = document.getElementById('reviewProductsList');
-    var mobileProductsList = document.getElementById('mobileProductsList'); // Novo container
-    
-    // Busca produtos no localStorage (mantendo sua lógica original)
+    var reviewProductsGroup = document.getElementById('reviewProductsGroup');
+    var reviewProductsContainer = document.getElementById('reviewProductsContainer');
+    if (!reviewProductsList) return;
+
+    // Busca produtos no localStorage
     var possibleKeys = ['produtos', 'products', 'cartProducts', 'cartItems', 'cart', 'pedido', 'items'];
     var produtos = null;
 
@@ -1545,15 +1543,34 @@ function renderReviewProducts() {
         }
     }
 
+    if (!produtos) {
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            try {
+                var rawItem = localStorage.getItem(key);
+                var parsedItem = JSON.parse(rawItem);
+                if (Array.isArray(parsedItem) && parsedItem.length > 0) {
+                    var first = parsedItem[0];
+                    if (first && (first.nome || first.name || first.title)) {
+                        produtos = parsedItem;
+                        break;
+                    }
+                }
+            } catch (e) {}
+        }
+    }
+
+    var displayStyle = (!produtos || produtos.length === 0) ? 'none' : '';
+    if (reviewProductsGroup) reviewProductsGroup.style.display = displayStyle;
+    if (reviewProductsContainer) reviewProductsContainer.style.display = displayStyle;
     if (!produtos) return;
 
-    // Limpa ambos os containers
-    if (reviewProductsList) reviewProductsList.innerHTML = '';
-    if (mobileProductsList) mobileProductsList.innerHTML = '';
-    
+    // Renderiza os itens de produtos
+    reviewProductsList.innerHTML = '';
     var subtotalGeral = 0;
 
-    produtos.forEach(function(p) {
+    for (var j = 0; j < produtos.length; j++) {
+        var p = produtos[j];
         var nome = p.nome || p.name || p.title || 'Produto';
         var qtd = parseInt(p.quantidade || p.quantity || 1);
         var preco = parseFloat(p.preco || p.price || p.valor || 0);
@@ -1564,26 +1581,54 @@ function renderReviewProducts() {
         var precoUnit = preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         var subtotalFormat = subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-        // Template HTML para o item
-        var itemHTML = `
-            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6;">
-                <img src="${foto}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;flex-shrink:0;" onerror="this.style.display='none'">
-                <div style="flex:1;min-width:0;">
-                    <div style="font-size:12px;font-weight:600;color:#111827;line-height:1.2;margin-bottom:2px;">${nome}</div>
-                    <div style="font-size:11px;color:#6b7280;">${qtd}x ${precoUnit}</div>
-                </div>
-                <div style="font-size:12px;font-weight:700;color:#111827;">${subtotalFormat}</div>
-            </div>`;
+        var item = document.createElement('div');
+        item.style.cssText = 'display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #e5e7eb;';
+        
+        var imgHTML = foto 
+            ? '<img src="'+foto+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #d1d5db;flex-shrink:0;" onerror="this.style.display=\'none\'">'
+            : '<div style="width:60px;height:60px;border-radius:6px;border:1px solid #d1d5db;background:#ffffff;flex-shrink:0;"></div>';
 
-        if (reviewProductsList) reviewProductsList.insertAdjacentHTML('beforeend', itemHTML);
-        if (mobileProductsList) mobileProductsList.insertAdjacentHTML('beforeend', itemHTML);
-    });
-
-    // Atualiza a variável global cartData para que os totais do topo fiquem corretos
-    if (typeof cartData !== 'undefined') {
-        cartData.subtotal = subtotalGeral;
-        updateOrderTotals(); // Chama a função que atualiza os textos de preço
+        item.innerHTML = imgHTML + 
+            '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.4;word-break:break-word;margin-bottom:4px;">' + nome + '</div>' +
+                '<div style="font-size:12px;color:#64748b;">Qtd: ' + qtd + ' &times; ' + precoUnit + '</div>' +
+            '</div>' +
+            '<div style="text-align:right;flex-shrink:0;">' +
+                '<div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;">' + subtotalFormat + '</div>' +
+            '</div>';
+        
+        reviewProductsList.appendChild(item);
     }
+
+    // Remove borda do último item
+    if (reviewProductsList.lastElementChild) {
+        reviewProductsList.lastElementChild.style.borderBottom = 'none';
+    }
+
+    // Atualiza subtotal
+    var subtotalFormatado = subtotalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    var subtotalEl = document.getElementById('reviewSubtotal');
+    if (subtotalEl) subtotalEl.textContent = subtotalFormatado;
+
+    // Calcula frete e total
+    var freteValor = 0;
+    var shippingOption = document.querySelector('.shipping-option.selected');
+    if (shippingOption) {
+        var priceText = shippingOption.querySelector('.shipping-price')?.textContent || 'GRÁTIS';
+        if (priceText !== 'GRÁTIS') {
+            freteValor = parseFloat(priceText.replace(/[^\d,.-]/g, '').replace(',', '.'));
+        }
+    }
+
+    var freteFormatado = freteValor > 0 ? freteValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'GRÁTIS';
+    var freteEl = document.getElementById('reviewShippingPrice');
+    if (freteEl) freteEl.textContent = freteFormatado;
+
+    // Total final
+    var totalFinal = subtotalGeral + freteValor;
+    var totalFormatado = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    var totalEl = document.getElementById('reviewTotalPrice');
+    if (totalEl) totalEl.textContent = totalFormatado;
 }
 
 
