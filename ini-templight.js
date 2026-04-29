@@ -1125,11 +1125,13 @@ async function handlePaymentSubmit(e) {
         const fullAddress = `${address}, ${number}, ${neighborhood}, ${city}/${state}`;
         
         // Definir o prazo de entrega baseado no frete selecionado
-        let deliveryTime = 'EntregaAqui';
-        if (selectedShipping === 'express') {
-            deliveryTime = 'EntregaExpressa';
-        } else if (selectedShipping === 'same-day') {
-            deliveryTime = 'EntregaMesmoDia';
+        let deliveryTime = '3 a 7 dias úteis';
+        const selectedOption = document.querySelector('.shipping-option.selected');
+        if (selectedOption) {
+            const timeText = selectedOption.querySelector('p');
+            if (timeText) {
+                deliveryTime = timeText.textContent.trim();
+            }
         }
 
         // Construir a URL com os parâmetros
