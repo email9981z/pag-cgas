@@ -1346,28 +1346,25 @@
 
         .pix-modal-external-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #f1f5f9;
+    top: 15px;
+    right: 15px;
+    background: transparent; /* Fundo transparente para ser discreto */
     border: none;
-    color: #64748b;
-    font-size: 1.1rem;
+    color: #94a3b8; /* Cor cinza suave */
+    font-size: 1rem; /* Tamanho levemente reduzido */
     cursor: pointer;
-    opacity: 0.8;
-    transition: all 0.2s;
+    opacity: 0.6; /* Mais transparente por padrão */
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    padding: 5px;
     z-index: 10;
 }
 
 .pix-modal-external-close:hover {
     opacity: 1;
-    background: #e2e8f0;
+    color: #64748b; /* Escurece levemente ao passar o mouse */
 }
 
         .pix-modal-header {
