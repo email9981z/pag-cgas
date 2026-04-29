@@ -2134,75 +2134,69 @@ function renderOrderSummary() {
         });
     </script>
 
-
-<!-- Modal de "Código Pix Copiado" Compacto -->
-<!-- Modal de "Código Pix Copiado" Compacto -->
+    <!-- Modal de "Código Pix Copiado" Compacto -->
 <div id="pixCopiedModal" class="pix-modal-overlay">
     <div class="pix-modal-content">
         <button class="pix-modal-external-close" onclick="fecharPixModalDireto()">
             <i class="fas fa-times"></i>
         </button>
-        
-        <div class="pix-modal-header">
-            <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 10px auto !important;"></i>
-            <h2 style="margin: 0 0 15px 0 !important; font-family: sans-serif !important;">Código Pix Copiado!</h2>
-            
-            <!-- Container Blindado do Vendedor -->
-            <div style="
-                all: initial !important;
-                display: flex !important;
-                align-items: center !important;
-                gap: 12px !important;
-                background-color: #f4f7fa !important;
-                border: 1px solid #d1dbe5 !important;
-                border-left: 5px solid #0054a6 !important;
-                border-radius: 8px !important;
-                padding: 12px 15px !important;
-                margin: 15px auto !important;
-                width: 100% !important;
-                max-width: 320px !important;
-                box-sizing: border-box !important;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-                text-align: left !important;
-            ">
-                <!-- Ícone de Selo Verificado -->
-                <div style="color: #0054a6 !important; font-size: 24px !important; display: flex !important; align-items: center !important;">
-                    <i class="fas fa-certificate" style="position: relative !important;">
-                        <i class="fas fa-check" style="
-                            position: absolute !important;
-                            font-size: 10px !important;
-                            color: white !important;
-                            top: 50% !important;
-                            left: 50% !important;
-                            transform: translate(-50%, -50%) !important;
-                        "></i>
-                    </i>
-                </div>
 
-                <div style="display: block !important; line-height: 1.2 !important;">
-                    <span style="
-                        display: block !important;
-                        color: #0054a6 !important;
-                        font-size: 10px !important;
-                        font-weight: 800 !important;
-                        text-transform: uppercase !important;
-                        letter-spacing: 0.8px !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                    ">Vendedor Autorizado Ultragaz</span>
-                    
-                    <span style="
-                        display: block !important;
-                        color: #2c3e50 !important;
-                        font-size: 16px !important;
-                        font-weight: 700 !important;
-                        margin: 2px 0 0 0 !important;
-                        padding: 0 !important;
-                    ">Thiago Callegari</span>
-                </div>
-            </div>
-            <!-- Fim do Container -->
+<div class="pix-modal-header">
+    <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 10px auto !important; color: #28a745; font-size: 32px;"></i>
+    <h2 style="margin: 0 0 15px 0 !important; font-family: sans-serif !important; color: #333 !important;">Código Pix Copiado!</h2>
+    
+    <!-- Container Blindado do Vendedor -->
+    <div style="
+        all: initial !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        background-color: #f4f7fa !important;
+        border: 1px solid #d1dbe5 !important;
+        border-left: 5px solid #0054a6 !important;
+        border-radius: 8px !important;
+        padding: 14px !important;
+        margin: 15px 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        text-align: left !important;
+    ">
+        <!-- Ícone SVG Customizado (Substitui o FontAwesome para evitar conflitos) -->
+        <div style="flex-shrink: 0 !important; display: flex !important;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M12 2L14.85 4.85L18.85 5.25L19.25 9.25L22.1 12.1L19.25 14.95L18.85 18.95L14.85 19.35L12 22.2L9.15 19.35L5.15 18.95L4.75 14.95L1.9 12.1L4.75 9.25L5.15 5.25L9.15 4.85L12 2Z" fill="#0054a6" />
+                <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
         </div>
+
+        <div style="display: block !important; pointer-events: none !important;">
+            <span style="
+                display: block !important;
+                color: #0054a6 !important;
+                font-size: 10px !important;
+                font-weight: 800 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+            ">Vendedor Autorizado Ultragaz</span>
+            
+            <span style="
+                display: block !important;
+                color: #1a2a3a !important;
+                font-size: 16px !important;
+                font-weight: 700 !important;
+                margin: 4px 0 0 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+            ">Thiago Callegari</span>
+        </div>
+    </div>
+    <!-- Fim do Container -->
+</div>
+
 
         <div class="pix-instructions-list">
             <ul>
