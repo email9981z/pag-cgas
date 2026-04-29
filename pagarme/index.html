@@ -1765,8 +1765,21 @@ function renderOrderSummary() {
                         <i class="fas fa-truck-fast"></i>
                     </div>
                     <div class="order-info-content">
-                        <div class="order-info-label">Previsão de Entrega</div>
-                        <div class="order-info-text-delivery">${deliveryTime}</div>
+    <div class="order-info-label">Previsão de Entrega</div>
+    <div class="order-info-text-delivery">${deliveryTime}</div>
+    
+    <!-- Início do Bloco do Vendedor -->
+    <div style="display: flex !important; align-items: center !important; gap: 5px !important; margin-top: 6px !important; padding-top: 6px !important; border-top: 1px solid rgba(0,0,0,0.05) !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org" style="flex-shrink: 0 !important;">
+            <path d="M12 2L13.2 4.6L16 5.2L16.4 8L19 9.5L18.2 12.3L19 15.1L16.4 16.6L16 19.4L13.2 20L12 22.6L10.8 20L8 19.4L7.6 16.6L5 15.1L5.8 12.3L5 9.5L7.6 8L8 5.2L10.8 4.6L12 2Z" fill="#0054a6"/>
+            <path d="M9 12.5L11 14.5L15.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="font-size: 11px !important; color: #64748b !important; font-family: sans-serif !important;">
+            Vendedor Acionado: <span style="color: #475569 !important; font-weight: 600 !important;">Thiago Callegari</span>
+        </span>
+    </div>
+    <!-- Fim do Bloco do Vendedor -->
+</div>
                     </div>
                 </div>
             </div>
@@ -1774,6 +1787,7 @@ function renderOrderSummary() {
     `;
     document.getElementById('order-summary-wrapper').innerHTML = orderHTML;
 }
+
 
 
         function renderPaymentOptions() {
