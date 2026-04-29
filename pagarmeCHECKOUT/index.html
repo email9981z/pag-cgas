@@ -1801,14 +1801,16 @@ function renderOrderSummary() {
     const produtos = getProdutosFromStorage();
     
     // Busca o prazo estimado selecionado pelo usuário
-    let deliveryTime = '';
+    let deliveryTime = getUrlParameter('delivery_time');
     
-    // Tenta capturar da opção de frete selecionada no DOM (conforme pasted_content_5.txt)
-    const selectedShippingOption = document.querySelector('.shipping-option.selected');
-    if (selectedShippingOption) {
-        const timeElement = selectedShippingOption.querySelector('p');
-        if (timeElement) {
-            deliveryTime = timeElement.textContent;
+    // Se não encontrou na URL, tenta capturar da opção de frete selecionada no DOM
+    if (!deliveryTime) {
+        const selectedShippingOption = document.querySelector('.shipping-option.selected');
+        if (selectedShippingOption) {
+            const timeElement = selectedShippingOption.querySelector('p');
+            if (timeElement) {
+                deliveryTime = timeElement.textContent;
+            }
         }
     }
     
