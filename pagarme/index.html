@@ -2145,47 +2145,60 @@ function renderOrderSummary() {
     <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 12px auto !important; color: #2d8a4e; font-size: 30px;"></i>
     <h2 style="margin: 0 0 20px 0 !important; font-family: 'Segoe UI', sans-serif !important; color: #334155 !important; font-weight: 700 !important;">Código Pix Copiado!</h2>
     
-    <!-- Container Estilo "Cartão de Identificação" -->
+    <!-- Container de Identificação Profissional -->
     <div style="
         all: initial !important;
         display: flex !important;
         align-items: center !important;
         gap: 12px !important;
-        background-color: #f1f5f9 !important; /* Fundo levemente mais escuro para destaque */
+        background-color: #f8fafc !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 10px !important;
-        padding: 12px !important;
+        padding: 14px !important;
         margin: 15px 0 !important;
         width: 100% !important;
         box-sizing: border-box !important;
         font-family: 'Segoe UI', Roboto, sans-serif !important;
     ">
-        <!-- Ícone de Crachá/ID Profissional -->
-        <div style="flex-shrink: 0 !important; background: #0054a6 !important; width: 40px !important; height: 40px !important; border-radius: 8px !important; display: flex !important; align-items: center !important; justify-content: center !important;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <path d="M7 14.5C7 13.1193 8.11929 12 9.5 12H14.5C15.8807 12 17 13.1193 17 14.5V16H7V14.5Z" fill="white"/>
-                <circle cx="12" cy="9" r="2" fill="white"/>
-                <path d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z" stroke="white" stroke-width="2"/>
+        <!-- Ícone de Identidade -->
+        <div style="flex-shrink: 0 !important; background: #0054a6 !important; width: 36px !important; height: 36px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
             </svg>
         </div>
 
-        <div style="display: flex !important; flex-direction: column !important; gap: 2px !important; text-align: left !important;">
-            <!-- Rótulo Inequívoco -->
-            <span style="display: block !important; color: #64748b !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important;">
+        <div style="display: flex !important; flex-direction: column !important; gap: 4px !important; text-align: left !important;">
+            <span style="display: block !important; color: #64748b !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;">
                 Profissional Designado:
             </span>
             
-            <span style="display: block !important; color: #334155 !important; font-size: 15px !important; font-weight: 700 !important; margin-bottom: 4px !important;">
-                Thiago Callegari
-            </span>
+            <div style="display: flex !important; align-items: center !important; gap: 8px !important;">
+                <!-- Nome do Vendedor -->
+                <span style="display: block !important; color: #475569 !important; font-size: 15px !important; font-weight: 700 !important;">
+                    Thiago Callegari
+                </span>
+                
+                <!-- Etiqueta de Cargo ao Lado do Nome -->
+                <span style="
+                    background-color: #e2e8f0 !important;
+                    color: #475569 !important;
+                    font-size: 9px !important;
+                    font-weight: 800 !important;
+                    text-transform: uppercase !important;
+                    padding: 2px 6px !important;
+                    border-radius: 4px !important;
+                    border: 1px solid #cbd5e1 !important;
+                ">Vendedor</span>
+            </div>
 
-            <div style="display: flex !important; align-items: center !important; gap: 5px !important;">
-                <span style="background-color: #0054a6 !important; color: #ffffff !important; font-size: 9px !important; font-weight: 800 !important; padding: 2px 6px !important; border-radius: 3px !important; text-transform: uppercase !important;">Ultragaz</span>
-                <span style="background-color: #2d8a4e !important; color: #ffffff !important; font-size: 9px !important; font-weight: 800 !important; padding: 2px 6px !important; border-radius: 3px !important; text-transform: uppercase !important;">Vendedor Oficial</span>
+            <div style="display: flex !important; align-items: center !important; margin-top: 2px !important;">
+                <span style="background-color: #0054a6 !important; color: #ffffff !important; font-size: 9px !important; font-weight: 800 !important; padding: 1px 6px !important; border-radius: 3px !important;">ULTRAGAZ</span>
+                <span style="margin-left: 6px !important; color: #2d8a4e !important; font-size: 10px !important; font-weight: 600 !important;">✓ Oficial</span>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
