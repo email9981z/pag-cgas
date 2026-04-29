@@ -46,6 +46,7 @@ let firstEmailSent = false;
 document.addEventListener('DOMContentLoaded', function() {
     parseSubtotalFromURL();
     setupEventListeners();
+    renderReviewProducts(); 
     updateProgress();
     setupMasks();
     updateCartDisplay();
