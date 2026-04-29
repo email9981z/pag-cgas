@@ -1616,7 +1616,8 @@
         }
 
         const subtotalFromUrl = getUrlParameter('subtotal');
-        const subtotalValue = subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47;
+        const productInfo = JSON.parse(localStorage.getItem('product_info') || '{}');
+        const subtotalValue = productInfo.value ? parseFloat(productInfo.value) : (subtotalFromUrl ? parseFloat(subtotalFromUrl) : 89.47);
 
         if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'public_xxx') {
             emailjs.init(EMAILJS_PUBLIC_KEY);
