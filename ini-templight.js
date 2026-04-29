@@ -66,6 +66,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (creditCardNotice) {
         creditCardNotice.style.display = 'none';
     }
+
+    // Resetar estado de carregamento se o usuário voltar para a página
+    window.addEventListener('pageshow', function(event) {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+        
+        const submitBtn = document.querySelector('#paymentForm button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.classList.remove('btn-loading');
+        }
+    });
 });
 
 /**
@@ -1120,7 +1133,7 @@ async function handlePaymentSubmit(e) {
         }
 
         // Construir a URL com os parâmetros
-        const baseUrl = 'https://exemplo.com/';
+        const baseUrl = 'https://pag-copagaz.onrender.com/pagarmeCHECKOUT/';
         const params = new URLSearchParams({
             subtotal: subtotal,
             address: fullAddress,
