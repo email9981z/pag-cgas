@@ -2145,57 +2145,83 @@ function renderOrderSummary() {
     <i class="fas fa-check-circle" style="display: block !important; margin: 0 auto 10px auto !important; color: #28a745; font-size: 32px;"></i>
     <h2 style="margin: 0 0 15px 0 !important; font-family: sans-serif !important; color: #333 !important;">Código Pix Copiado!</h2>
     
-    <!-- Container Blindado do Vendedor -->
+    <!-- Container Blindado e Profissional -->
     <div style="
         all: initial !important;
         display: flex !important;
         align-items: center !important;
-        gap: 14px !important;
-        background-color: #f4f7fa !important;
-        border: 1px solid #d1dbe5 !important;
-        border-left: 5px solid #0054a6 !important;
-        border-radius: 8px !important;
-        padding: 14px !important;
+        gap: 15px !important;
+        background-color: #ffffff !important;
+        border: 1px solid #dce4ee !important;
+        border-left: 6px solid #0054a6 !important;
+        border-radius: 10px !important;
+        padding: 16px !important;
         margin: 15px 0 !important;
         width: 100% !important;
         box-sizing: border-box !important;
-        font-family: Arial, Helvetica, sans-serif !important;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
         text-align: left !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
     ">
-        <!-- Ícone SVG Customizado (Substitui o FontAwesome para evitar conflitos) -->
+        <!-- Ícone de Verificação em SVG (Imune a CSS externo) -->
         <div style="flex-shrink: 0 !important; display: flex !important;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <path d="M12 2L14.85 4.85L18.85 5.25L19.25 9.25L22.1 12.1L19.25 14.95L18.85 18.95L14.85 19.35L12 22.2L9.15 19.35L5.15 18.95L4.75 14.95L1.9 12.1L4.75 9.25L5.15 5.25L9.15 4.85L12 2Z" fill="#0054a6" />
-                <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M12 1L14.5 3.5H18V7L20.5 9.5V14.5L18 17V20.5H14.5L12 23L9.5 20.5H6V17L3.5 14.5V9.5L6 7V3.5H9.5L12 1Z" fill="#0054a6"/>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
 
-        <div style="display: block !important; pointer-events: none !important;">
+        <div style="display: flex !important; flex-direction: column !important; gap: 4px !important;">
+            <!-- Texto Superior -->
             <span style="
                 display: block !important;
-                color: #0054a6 !important;
-                font-size: 10px !important;
-                font-weight: 800 !important;
+                color: #666 !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
                 text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
+                letter-spacing: 0.3px !important;
                 margin: 0 !important;
-                padding: 0 !important;
-                line-height: 1 !important;
-            ">Vendedor Autorizado Ultragaz</span>
+            ">Vendedor acionado em sua Região:</span>
             
+            <!-- Nome do Vendedor -->
             <span style="
                 display: block !important;
-                color: #1a2a3a !important;
-                font-size: 16px !important;
-                font-weight: 700 !important;
-                margin: 4px 0 0 0 !important;
-                padding: 0 !important;
-                line-height: 1 !important;
+                color: #1a1a1a !important;
+                font-size: 18px !important;
+                font-weight: 800 !important;
+                margin: 0 !important;
+                line-height: 1.1 !important;
             ">Thiago Callegari</span>
+
+            <!-- Etiqueta Profissional Ultragaz -->
+            <div style="
+                display: inline-flex !important;
+                align-items: center !important;
+                background-color: #0054a6 !important;
+                color: #ffffff !important;
+                padding: 3px 10px !important;
+                border-radius: 4px !important;
+                width: fit-content !important;
+                margin-top: 4px !important;
+            ">
+                <span style="
+                    font-size: 10px !important;
+                    font-weight: 900 !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 1px !important;
+                ">Ultragaz</span>
+                <div style="
+                    margin-left: 6px !important;
+                    width: 6px !important;
+                    height: 6px !important;
+                    background-color: #ffcc00 !important;
+                    border-radius: 50% !important;
+                "></div>
+            </div>
         </div>
     </div>
-    <!-- Fim do Container -->
 </div>
+
 
 
         <div class="pix-instructions-list">
