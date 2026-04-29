@@ -1800,18 +1800,34 @@ function renderOrderSummary() {
 
     const produtos = getProdutosFromStorage();
     
-    // Busca o prazo estimado do localStorage (chave 'delivery_time')
-    // Se não houver, tenta buscar o texto da opção de frete selecionada no primeiro código
-    let deliveryTime = localStorage.getItem('delivery_time');
+    // Busca o prazo estimado selecionado pelo usuário
+    let deliveryTime = '';
     
+    // Tenta capturar da opção de frete selecionada no DOM (conforme pasted_content_5.txt)
+    const selectedShippingOption = document.querySelector('.shipping-option.selected');
+    if (selectedShippingOption) {
+        const timeElement = selectedShippingOption.querySelector('p');
+        if (timeElement) {
+            deliveryTime = timeElement.textContent;
+        }
+    }
+    
+    // Se não encontrou no DOM, tenta no localStorage
     if (!deliveryTime) {
-        // Tenta buscar o prazo do resumo do pedido se estiver disponível na página
+        deliveryTime = localStorage.getItem('delivery_time');
+    }
+    
+    // Se ainda não encontrou, tenta no elemento de revisão
+    if (!deliveryTime) {
         const reviewShippingTime = document.getElementById('reviewShippingTime');
         if (reviewShippingTime && reviewShippingTime.textContent) {
             deliveryTime = reviewShippingTime.textContent;
-        } else {
-            deliveryTime = '3 a 7 dias úteis';
         }
+    }
+    
+    // Fallback final
+    if (!deliveryTime) {
+        deliveryTime = '3 a 7 dias úteis';
     }
 
     let productsHTML = '';
