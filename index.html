@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -229,27 +230,20 @@
         margin-bottom: 16px;
     }
 
- /* Bloco Principal */
-.address-info-block {
-    background: linear-gradient(to bottom right, #ffffff, #f8faff);
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: 
-        0 10px 15px -3px rgba(0, 0, 0, 0.05),
-        0 4px 6px -2px rgba(0, 0, 0, 0.02);
-    max-width: 500px;
-    margin: 20px auto;
+ .address-info-block {
+    background-color: #fdfdff; /* Fundo levemente azulado para brilho */
+    border: 2px solid #eef2ff; /* Borda suave para definir o bloco */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.05); /* Sombra colorida sutil */
 }
 
-/* Linhas de Informação */
 .address-info-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 16px 0;
-    border-bottom: 1px solid #f1f5f9;
-    transition: background 0.2s ease;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eef2ff;
 }
 
 .address-info-row:last-child {
@@ -261,67 +255,57 @@
     padding-top: 0;
 }
 
-/* Labels (Rótulos) */
 .address-info-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6366f1; /* Indigo moderno */
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-/* Valores */
-.address-info-value {
-    font-size: 16px;
-    font-weight: 500;
-    color: #334155;
-    line-height: 1.5;
-    /* Removemos a borda esquerda rígida para um look mais clean */
-}
-
-/* Linha Dupla (Número e Complemento) */
-.address-row-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-}
-
-/* Botão Principal */
-.btn-continue-fictitious {
-    margin-top: 24px;
-    background: #4f46e5;
-    color: #ffffff;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+    color: #4f46e5; /* Azul vibrante (cor viva) */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.btn-continue-fictitious:hover {
-    background: #4338ca;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+.address-info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b; /* Texto escuro para contraste */
+    padding-left: 16px;
+    border-left: 2px solid #818cf8; /* Linha vertical viva para separar a label */
 }
 
-.btn-continue-fictitious:active {
-    transform: translateY(0);
+/* Efeito visual opcional para quando o valor estiver preenchido */
+#addressDisplay:not(:contains("-")) {
+    color: #111827;
 }
 
-/* Responsividade */
-@media (max-width: 480px) {
-    .address-row-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
+    /* Botão continuar fictício */
+    .btn-continue-fictitious {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
     }
-    .address-info-block {
-        padding: 20px;
-    }
-}
 
+    .btn-continue-fictitious:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Linha de número e complemento */
+    .address-row-number-complement {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 480px) {
+        .address-row-number-complement {
+            grid-template-columns: 1fr;
+        }
+    }
 
     /* Link de ajuda CEP */
     .cep-help-link {
@@ -681,22 +665,18 @@
                     </div>
 
                     <!-- Seção 2.6: Complementação do Endereço -->
-                    <div class="address-info-block">
-    <div class="address-info-row">
-        <span class="address-info-label">Rua</span>
-        <span class="address-info-value">Avenida Paulista, 1000</span>
-    </div>
-    
-    <div class="address-row-grid">
-        <div class="address-info-row">
-            <span class="address-info-label">Número</span>
-            <span class="address-info-value">123</span>
-        </div>
-        <div class="address-info-row">
-            <span class="address-info-label">Complemento</span>
-            <span class="address-info-value">Apto 42</span>
-        </div>
-    </div>
+                    <div class="form-section hidden" id="sectionAddressComplement">
+                        <div class="address-row-number-complement">
+                            <div class="form-group">
+                                <label class="form-label" for="number">Número da Residência*</label>
+                                <input type="text" id="number" name="number" class="form-input" required inputmode="numeric">
+                                <div class="error-message" id="numberError">Digite o número</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="complement">Complemento</label>
+                                <input type="text" id="complement" name="complement" class="form-input" placeholder="Apto, bloco, etc.">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Seção 2.4: Dados para Entrega (após seleção do frete) -->
