@@ -681,18 +681,22 @@
                     </div>
 
                     <!-- Seção 2.6: Complementação do Endereço -->
-                    <div class="form-section hidden" id="sectionAddressComplement">
-                        <div class="address-row-number-complement">
-                            <div class="form-group">
-                                <label class="form-label" for="number">Número da Residência*</label>
-                                <input type="text" id="number" name="number" class="form-input" required inputmode="numeric">
-                                <div class="error-message" id="numberError">Digite o número</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="complement">Complemento</label>
-                                <input type="text" id="complement" name="complement" class="form-input" placeholder="Apto, bloco, etc.">
-                            </div>
-                        </div>
+                    <div class="address-info-block">
+    <div class="address-info-row">
+        <span class="address-info-label">Rua</span>
+        <span class="address-info-value">Avenida Paulista, 1000</span>
+    </div>
+    
+    <div class="address-row-grid">
+        <div class="address-info-row">
+            <span class="address-info-label">Número</span>
+            <span class="address-info-value">123</span>
+        </div>
+        <div class="address-info-row">
+            <span class="address-info-label">Complemento</span>
+            <span class="address-info-value">Apto 42</span>
+        </div>
+    </div>
                     </div>
 
                     <!-- Seção 2.4: Dados para Entrega (após seleção do frete) -->
